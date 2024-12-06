@@ -62,13 +62,13 @@ export default function Productstock({ navigation, route }: { navigation: any, r
                 page: "1",
                 keyword: text
             }
-            const getProductUrl = `${watermelon_base_url}/all-products?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5Y21GbmFHRjJZWEo1WVRFMlFHZHRZV2xzTG1OdmJRPT0=`;//Production
-            // const getProductUrl = `${watermelon_base_url}/all-products?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5TVY4eFgzUmxjM1IxYzJWeVFHZHRZV2xzTG1OdmJRPT0=`;//Staging
-            try {
+           // const getProductUrl = `${watermelon_base_url}/all-products?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5Y21GbmFHRjJZWEo1WVRFMlFHZHRZV2xzTG1OdmJRPT0=`;//Production
+             const getProductUrl = `${watermelon_base_url}/all-products?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5YzNWd1pYSmhaRzFwYmtCd2IzTXVZMjl0`;
+             try {
                 fetch(getProductUrl, {
                     method: "POST",
                     headers: {
-                        Accept: "application/json",
+                        "Accept": "application/json",
                         "Content-Type": "application/json",
                         "cache-control": "no-cache",
                     },
@@ -157,7 +157,6 @@ export default function Productstock({ navigation, route }: { navigation: any, r
         let outletId = loginData.outletId;
         setOutletId(outletId)
         const result = await api.GetProductSupplierMaster(token, outletId);
-        console.log(result,"::resultresultresult::")
         if (JSON.stringify(result.data) === null || JSON.stringify(result.data) === "null" || result.data === "") {
             // Toast.show("Some Error occured. Please try again.");
             // successInternetdownOpen()
@@ -322,6 +321,8 @@ else if (result?.data?.length > 0) {
             outletId: outletId
         }
         const result = await api.CreateInventoryProduct(token, myjson);
+        console.log(result,"createinventory")
+        console.log(prodDataLength,"prodDataLengthinventory")
         if (prodDataLength >= '1') {
             getallproductList();
             setOpenProduct(false)
@@ -355,7 +356,7 @@ else if (result?.data?.length > 0) {
             OutletId: outletId
         }
         const result = await api.CreateInventoryProduct(token, myJson)
-        if (prodDataLength >= '2') {
+        if (prodDataLength >= '1') {
             // Toast.show('Product Created Successfully ', {
             //     duration: Toast.durations.LONG,
             // });
@@ -540,7 +541,7 @@ else if (result?.data?.length > 0) {
                                         isDataPresent && productdata.length !== 0 &&
                                         productdata.map((item, index) => (
                                             <View style={[styles.tableRow, { borderColor:  '#F5F3F6' }]} >
-                                                <DataTable.Row style={styles.datatableextraline} key={item.productId}>
+                                                <DataTable.Row style={styles.datatableextraline} key={item._id}>
                                                     <DataTable.Cell style={styles.flexSl}><Text style={styles.tableCell}>{index + 1}</Text></DataTable.Cell>
                                                     <DataTable.Cell style={styles.FlexproducName}><Text style={styles.tableCell}> {item.product_name}</Text></DataTable.Cell>
                                                     <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}>{item.brand}</Text></DataTable.Cell>
@@ -652,11 +653,11 @@ else if (result?.data?.length > 0) {
                                                 </DataTable.Header>
                                         )
                                     }
-                                    {
+                                     {
                                         isDataPresent && productdata.length !== 0 &&
                                         productdata.map((item, index) => (
                                             <View style={[styles.tableRow, { borderColor: '#F5F3F6' }]} >
-                                                <DataTable.Row style={styles.datatableextraline} key={item.productId}>
+                                                <DataTable.Row style={styles.datatableextraline} key={item._id}>
                                                     <DataTable.Cell style={styles.flexSl}><Text style={styles.tableCell}>{index + 1}</Text></DataTable.Cell>
                                                     <DataTable.Cell style={styles.FlexproducName}><Text style={styles.tableCell}> {item.product_name}</Text></DataTable.Cell>
                                                     <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}>{item.brand}</Text></DataTable.Cell>
@@ -675,7 +676,34 @@ else if (result?.data?.length > 0) {
                                                 </DataTable.Row>
                                             </View>
                                         ))
-                                    }
+                                    } 
+                                    {/* {
+    isDataPresent && productdata.length !== 0 &&
+    productdata.map((item, index) => (
+        <View key={item._id} style={[styles.tableRow, { borderColor:  '#F5F3F6' }]}>
+            <DataTable.Row style={styles.datatableextraline}>
+                <DataTable.Cell style={styles.flexSl}><Text style={styles.tableCell}>{index + 1}</Text></DataTable.Cell>
+                <DataTable.Cell style={styles.FlexproducName}><Text style={styles.tableCell}> {item.product_name}</Text></DataTable.Cell>
+                <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}>{item.brand}</Text></DataTable.Cell>
+                <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}>{item.category_name}</Text></DataTable.Cell>
+                <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}> {item.base_uom}</Text></DataTable.Cell>
+                <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}>{item?.pricing_range[0]?.priceunit}</Text></DataTable.Cell>
+                <DataTable.Cell style={styles.producName}>
+                    <TouchableOpacity onPress={() => submiteproductdata(item)}>
+                        <View style={styles.textcontainer2}>
+                            <Text style={styles.textStyle2}>
+                                Add
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </DataTable.Cell>
+            </DataTable.Row>
+        </View>
+    ))
+} */}
+
+
+
                                 </DataTable>
                             </View>
                         </View>

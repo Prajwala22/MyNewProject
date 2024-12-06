@@ -488,12 +488,11 @@ export default function MenuCategory({ navigation, route }: { navigation: any, r
     }
 
     const submitdiscount = async () => {
-        alert("1")
         const jsonValue: any = await AsyncStorage.getItem('userInfo')
         let loginData = JSON.parse(jsonValue);
         let token = loginData.token;
         let outletId = loginData.outletId;
-        if (checkeddiscntId.length !== 0 ) {
+        if (checkeddiscntId.length !== 0) {
             let itemObj = {
                 id: edititemdiscount.id,
                 itemName: edititemdiscount.itemName,
@@ -847,105 +846,107 @@ export default function MenuCategory({ navigation, route }: { navigation: any, r
 
     const popupAddDiscount = () => {
         return (
-            <KeyboardAwareScrollView enableOnAndroid={true}
-                enableAutomaticScroll={(Platform.OS === 'ios')}>
-                <View style={styles.popupContainer}>
-                    <View style={styles.popupHeadWrap}>
-                        <Text style={styles.textStyle3}>
-                            Add Discount for<Text style={styles.addmoifieritem}> {edititemdiscount?.itemName}</Text>
-                        </Text>
-                        <Pressable style={styles.closeView} onPress={() => toggleModa3()}>
-                            <Image source={(require("../../assets/images/cross_icon.png"))} style={styles.crossIcon} />
-                            <Text style={styles.closeText}>
-                                Close
+            <View style={[styles.popupheight]}>
+                <KeyboardAwareScrollView enableOnAndroid={true}
+                    enableAutomaticScroll={(Platform.OS === 'ios')}>
+                    <View style={[styles.popupContainer]}>
+                        <View style={styles.popupHeadWrap}>
+                            <Text style={styles.textStyle3}>
+                                Add Discount for<Text style={styles.addmoifieritem}> {edititemdiscount?.itemName}</Text>
                             </Text>
-                        </Pressable>
-                    </View>
-                    <View style={styles.disPromoBlk}>
-                        <View style={[styles.paddR8, styles.discountBlk]}>
-                            <View style={styles.discountSeg}>
-                                <Text style={[styles.tableCell, style.marBtm10]}>Choose Discount</Text>
-                                <ScrollView style={styles.disHei}>
-                                    {
-                                        (DiscountFromArray)
-                                    }
-                                </ScrollView>
-                            </View>
-                            <View style={[styles.discountSeg, styles.disseg]}>
-                                <Text style={[styles.tableCell, style.marBtm10]}>Selected Discount</Text>
-                                {
-                                    (
-                                        <View>
-                                            <View style={styles.discountvalueBlk}>
-                                                <Text style={styles.tableHeader}>Discount Type : </Text><Text style={[styles.promoValue]}>{discountdataparticular[0]?.discountType}</Text>
-                                            </View>
-                                            <View style={styles.discountvalueBlk}>
-                                                <Text style={styles.tableHeader}>Discount Value : </Text><Text style={[styles.promoValue]}>{discountdataparticular[0]?.discountValue}</Text>
-                                            </View>
-                                            <View style={styles.discountvalueBlk}>
-                                                <Text style={styles.tableHeader}>Discount Amount : </Text><Text style={[styles.promoValue]}>{discountdataparticular[0]?.discountType}</Text>
-                                            </View>
-                                            <View style={styles.discountvalueBlk}>
-                                                <Text style={styles.tableHeader}>Discount Notes : </Text><Text style={[styles.promoValue]}>{discountdataparticular[0]?.discoutNotes}</Text>
-                                            </View>
-                                        </View>
-                                    )
-
-                                }
-                            </View>
+                            <Pressable style={styles.closeView} onPress={() => toggleModa3()}>
+                                <Image source={(require("../../assets/images/cross_icon.png"))} style={styles.crossIcon} />
+                                <Text style={styles.closeText}>
+                                    Close
+                                </Text>
+                            </Pressable>
                         </View>
-
-                        <View style={[styles.paddL8, styles.discountBlk]}>
-                            <View style={[styles.discountSeg]}>
-                                <Text style={[styles.tableCell, style.marBtm10]}>Add Promo Code</Text>
-                                <ScrollView style={styles.disHei}>
-
+                        <View style={styles.disPromoBlk}>
+                            <View style={[styles.paddR8, styles.discountBlk]}>
+                                <View style={styles.discountSeg}>
+                                    <Text style={[styles.tableCell, style.marBtm10]}>Choose Discount</Text>
+                                    <ScrollView style={styles.disHei}>
+                                        {
+                                            (DiscountFromArray)
+                                        }
+                                    </ScrollView>
+                                </View>
+                                <View style={[styles.discountSeg, styles.disseg]}>
+                                    <Text style={[styles.tableCell, style.marBtm10]}>Selected Discount</Text>
                                     {
-                                        (PromocodeFromArray)
+                                        (
+                                            <View>
+                                                <View style={styles.discountvalueBlk}>
+                                                    <Text style={styles.tableHeader}>Discount Type : </Text><Text style={[styles.promoValue]}>{discountdataparticular[0]?.discountType}</Text>
+                                                </View>
+                                                <View style={styles.discountvalueBlk}>
+                                                    <Text style={styles.tableHeader}>Discount Value : </Text><Text style={[styles.promoValue]}>{discountdataparticular[0]?.discountValue}</Text>
+                                                </View>
+                                                <View style={styles.discountvalueBlk}>
+                                                    <Text style={styles.tableHeader}>Discount Amount : </Text><Text style={[styles.promoValue]}>{discountdataparticular[0]?.discountType}</Text>
+                                                </View>
+                                                <View style={styles.discountvalueBlk}>
+                                                    <Text style={styles.tableHeader}>Discount Notes : </Text><Text style={[styles.promoValue]}>{discountdataparticular[0]?.discoutNotes}</Text>
+                                                </View>
+                                            </View>
+                                        )
+
                                     }
-                                </ScrollView>
+                                </View>
                             </View>
-                            <View style={[styles.discountSeg, styles.disseg]}>
-                                <Text style={[styles.tableCell, style.marBtm10]}>Selected Promo Code</Text>
-                                {
-                                    (
+
+                            <View style={[styles.paddL8, styles.discountBlk]}>
+                                <View style={[styles.discountSeg]}>
+                                    <Text style={[styles.tableCell, style.marBtm10]}>Add Promo Code</Text>
+                                    <ScrollView style={styles.disHei}>
+
+                                        {
+                                            (PromocodeFromArray)
+                                        }
+                                    </ScrollView>
+                                </View>
+                                <View style={[styles.discountSeg, styles.disseg]}>
+                                    <Text style={[styles.tableCell, style.marBtm10]}>Selected Promo Code</Text>
+                                    {
+                                        (
+                                            <View>
+                                                <View style={styles.discountvalueBlk}>
+                                                    <Text style={styles.tableHeader}>Promo Type : </Text><Text style={[styles.promoValue]}>{getpromofilterdata[0]?.promocodeType}</Text>
+                                                </View>
+                                                <View style={styles.discountvalueBlk}>
+                                                    <Text style={styles.tableHeader}>Promo Value : </Text><Text style={[styles.promoValue]}>{getpromofilterdata[0]?.promocodeValue}</Text>
+                                                </View>
+                                                <View style={styles.discountvalueBlk}>
+                                                    <Text style={styles.tableHeader}>Promo Amount : </Text><Text style={[styles.promoValue]}>{getpromofilterdata[0]?.promocodeType}</Text>
+                                                </View>
+                                                <View style={styles.discountvalueBlk}>
+                                                    <Text style={styles.tableHeader}>Promo Notes : </Text><Text style={[styles.promoValue]}>{getpromofilterdata[0]?.PromoNotes}</Text>
+                                                </View>
+                                            </View>
+                                        )
+
+                                    }
+                                </View>
+
+                                <View style={[styles.wdth100, styles.martop15]}>
+                                    <TouchableOpacity onPress={() => submitdiscount()}>
                                         <View>
-                                            <View style={styles.discountvalueBlk}>
-                                                <Text style={styles.tableHeader}>Promo Type : </Text><Text style={[styles.promoValue]}>{getpromofilterdata[0]?.promocodeType}</Text>
-                                            </View>
-                                            <View style={styles.discountvalueBlk}>
-                                                <Text style={styles.tableHeader}>Promo Value : </Text><Text style={[styles.promoValue]}>{getpromofilterdata[0]?.promocodeValue}</Text>
-                                            </View>
-                                            <View style={styles.discountvalueBlk}>
-                                                <Text style={styles.tableHeader}>Promo Amount : </Text><Text style={[styles.promoValue]}>{getpromofilterdata[0]?.promocodeType}</Text>
-                                            </View>
-                                            <View style={styles.discountvalueBlk}>
-                                                <Text style={styles.tableHeader}>Promo Notes : </Text><Text style={[styles.promoValue]}>{getpromofilterdata[0]?.PromoNotes}</Text>
-                                            </View>
+                                            <CustomButton styles={styles.addCaaatBtn} onPress={() => submitdiscount()} label={"Continue"} />
                                         </View>
-                                    )
+                                    </TouchableOpacity>
+                                </View>
 
-                                }
                             </View>
 
-                            <View style={[styles.wdth100, styles.martop15]}>
-                                <TouchableOpacity onPress={() => submitdiscount()}>
-                                    <View>
-                                        <CustomButton styles={styles.addCaaatBtn} onPress={() => submitdiscount()} label={"Continue"} />
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
+
+
+
+
 
                         </View>
-
-
-
-
-
-
                     </View>
-                </View>
-            </KeyboardAwareScrollView>
+                </KeyboardAwareScrollView>
+            </View>
         );
     }
     //Add modifier to Item

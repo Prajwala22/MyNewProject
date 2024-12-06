@@ -234,39 +234,36 @@ export default function TableViewTax({ data, sendEditData, sendEditTaxsetUpData,
 
   return (
     <View>
-      <View>
-        <DataTable {...props}>
-          <DataTable.Header style={[styles.headerStyle]}>
-            <DataTable.Title style={styles.userssl}><Text style={styles.tableHeader}>Sl.No</Text> </DataTable.Title>
-            <DataTable.Title><Text style={styles.tableHeader}>Tax Name</Text> </DataTable.Title>
-            <DataTable.Title style={[styles.justifyCenter]}><Text style={styles.tableHeader}>Action</Text></DataTable.Title>
-          </DataTable.Header>
-          <ScrollView >
+<View>
+  <DataTable {...props}>
+    <DataTable.Header style={[styles.headerStyle]}>
+      <DataTable.Title style={styles.userssl}><Text style={styles.tableHeader}>Sl.No</Text> </DataTable.Title>
+      <DataTable.Title><Text style={styles.tableHeader}>Tax Name</Text> </DataTable.Title>
+      <DataTable.Title style={[styles.justifyCenter]}><Text style={styles.tableHeader}>Action</Text></DataTable.Title>
+    </DataTable.Header>
+    
+    <ScrollView>
+      {data
+        .slice(page * numberOfItemsPerPage, page * numberOfItemsPerPage + numberOfItemsPerPage)
+        .map((row, index) => (
+          <View key={row.taxId || index}>{tableRow(row)}</View>
+        ))}
+    </ScrollView>
 
+    <DataTable.Pagination
+      page={page}
+      numberOfPages={Math.ceil(data.length / numberOfItemsPerPage)}
+      onPageChange={(page) => setPage(page)}
+      label={`${from + 1}-${to} of ${data.length}`}
+      showFastPaginationControls
+      numberOfItemsPerPageList={numberOfItemsPerPageList}
+      numberOfItemsPerPage={numberOfItemsPerPage}
+      onItemsPerPageChange={onItemsPerPageChange}
+      selectPageDropdownLabel={'Rows per page'}
+    />
+  </DataTable>
+</View>
 
-            {data
-              .slice(
-                page * numberOfItemsPerPage,
-                page * numberOfItemsPerPage + numberOfItemsPerPage
-              )
-              .map((row) => tableRow(row))}
-
-          </ScrollView>
-
-          <DataTable.Pagination
-            page={page}
-            numberOfPages={Math.ceil(data.length / numberOfItemsPerPage)}
-            onPageChange={(page) => setPage(page)}
-            label={`${from + 1}-${to} of ${data.length}`}
-            showFastPaginationControls
-            numberOfItemsPerPageList={numberOfItemsPerPageList}
-            numberOfItemsPerPage={numberOfItemsPerPage}
-            onItemsPerPageChange={onItemsPerPageChange}
-            selectPageDropdownLabel={'Rows per page'}
-          />
-
-        </DataTable>
-      </View>
       {openDeleteSuccessMsg &&
         <Modal isVisible={openDeleteSuccessMsg}>
           {SuccessUpdatePopup()}

@@ -250,7 +250,6 @@ export default function SupplierOrders({ navigation, route }: { navigation: any,
         let outletId = loginData.outletId;
         const result = await api.GetrecipeList(token, outletId);
 
-        console.log(result,"receipstresult")
         if (JSON.stringify(result.data) === null || JSON.stringify(result.data) === "null" || result.data === "") {
             // Toast.show("Some Error occured. Please try again.");
             // successInternetdownOpen()

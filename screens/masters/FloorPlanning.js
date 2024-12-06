@@ -14,8 +14,8 @@ import ModalSelector from 'react-native-modal-selector';
 import { event } from 'react-native-reanimated';
 import { useIsFocused } from '@react-navigation/native';
 import Modal from "react-native-modal";
-
-
+import { useNavigation } from '@react-navigation/native';
+import { StyleSheet } from 'react-native';
 import Interactable from 'react-native-interactable';
 import { GestureDetector, PanGestureHandler, State } from 'react-native-gesture-handler';
 import Animated, {
@@ -34,7 +34,9 @@ import DraggableTable from './DraggableTable'
 //   } from "react-native-draggable-flatlist";
 
 
-export default function FloorPlanning(navigation) {
+export default function FloorPlanning() {
+    const navigation = useNavigation();  // Getting the navigation object
+
     const optionsPerPage = [2, 3, 4];
     const [page, setPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
@@ -64,44 +66,34 @@ export default function FloorPlanning(navigation) {
     }, [isFocused]);
 
     const getTableDetailsList = async () => {
-        setisrefreshingresultTablelist(true)
-        
-        const jsonValue = await AsyncStorage.getItem('userInfo')
+        const jsonValue = await AsyncStorage.getItem('userInfo');
         let loginData = JSON.parse(jsonValue);
         let token = loginData.token;
         let outletId = loginData.outletId;
-        setOutletId(outletId)
+        setOutletId(outletId);
+
         const result = await api.getAllMasterData(token, endPoint.GET_TABLEDETAILS + outletId);
         const tableresult = await api.getAllMasterData(token, endPoint.GET_TABLE_TYPE + outletId);
+
         if (result.success) {
-            // setTableData(result.data)
-            if(result.data.length > 0){
-                setTableTempData(result.data)
-                setTableTypeListData(tableresult.data)
-                setisrefreshingresultTablelist(false);
-                    const filteredDefaultTableData = {
-                        key: 0,
-                        label: tableresult.data[0]?.tableTypeName,
-                        value: tableresult.data[0]?.tableTypeName,
-                    }
-                    let filtereddata = result.data.filter((el) => {
-                        if (tableresult.data[0]?.tableTypeName != '') {
-                            return el.tableType === tableresult.data[0]?.tableTypeName
-            
-                        }
-                        else {
-                            return true
-                        }
-                    })
-                    setTableData(filtereddata)
-                    // updateTableList(filteredDefaultTableData,true)
-                    setTableType(tableresult.data[0]?.tableTypeName)
-            }      
+            setTableTempData(result.data);
+            setTableTypeListData(tableresult.data);
+            const filteredDefaultTableData = {
+                key: 0,
+                label: tableresult.data[0]?.tableTypeName,
+                value: tableresult.data[0]?.tableTypeName,
+            };
+            let filtereddata = result.data.filter((el) => {
+                return el.tableType === tableresult.data[0]?.tableTypeName;
+            });
+            setTableData(filtereddata);
+            setTableType(tableresult.data[0]?.tableTypeName);
+            setLoading(false);
+        } else {
+            alert('Error loading table details');
+            setLoading(false);
         }
-        else {
-            Toast.show('Some Error Occured. Please try again later')
-        }
-    }
+    };
 
     //filter table details method starts
     let tablenewarray = tableTypeListData.map((s, i) => {
@@ -117,69 +109,50 @@ export default function FloorPlanning(navigation) {
     //update Table details
     const updateTableList = (data, status) => {
         let filtereddata = tableTempData.filter((el) => {
-            
-            if (data.value != '') {
-                return el.tableType === data.value
-
-            }
-            else {
-                return true
-            }
-
-        })
+            return el.tableType === data.value || data.value === '';
+        });
         setTableData(filtereddata);
         setSelectedValue(data.key);
-        setTableType(data.value)
-        if(!status){
+        setTableType(data.value);
+        if (!status) {
             getOnchangeTableDetailsList(data);
         }
-    }
+    };
     //On Change Section API Call
     const getOnchangeTableDetailsList = async (data) => {
-        setisrefreshingresultTablelist(true)
-        
-        const jsonValue = await AsyncStorage.getItem('userInfo')
+        setLoading(true);
+
+        const jsonValue = await AsyncStorage.getItem('userInfo');
         let loginData = JSON.parse(jsonValue);
         let token = loginData.token;
         let outletId = loginData.outletId;
-        setOutletId(outletId)
+        setOutletId(outletId);
+
         const result = await api.getAllMasterData(token, endPoint.GET_TABLEDETAILS + outletId);
-        const tableresult = await api.getAllMasterData(token, endPoint.GET_TABLE_TYPE + outletId);
         if (result.success) {
-            // setTableData(result.data)
-            if(result.data.length > 0){
-                setTableTempData(result.data)
-                setTableTypeListData(tableresult.data)
-                setisrefreshingresultTablelist(false);
-                let filtereddata = result.data.filter((el) => {
-            
-                    if (data.value != '') {
-                        return el.tableType === data.value
-        
-                    }
-                    else {
-                        return true
-                    }
-        
-                })
-                setTableData(filtereddata);
-            }      
+            setTableTempData(result.data);
+            let filtereddata = result.data.filter((el) => {
+                return el.tableType === data.value || data.value === '';
+            });
+            setTableData(filtereddata);
+            setLoading(false);
+        } else {
+            alert('Error updating table details');
+            setLoading(false);
         }
-        else {
-            Toast.show('Some Error Occured. Please try again later')
-        }
-    }
+    };
     //OnDrag Method 
-    const onMoveTable = async (x, y, tableId) => {
-        const newState = tableData.map(obj => {
-            // 👇️ if id equals 2, update country property
+    const onMoveTable = (x, y, tableId) => {
+        // Update table data or state
+        const updatedTableData = tableData.map(obj => {
             if (obj.tableId === tableId) {
-                return { ...obj, x: x, y: y };
+                return { ...obj, x: x, y: y };  // Update the position of the table
             }
             return obj;
         });
-        setTableData(newState)
-    }
+        setTableData(updatedTableData);
+    };
+
     //Edit Drag Table API Integration
     const editDragTable = async () => {
         setDragTable(true)
@@ -191,22 +164,32 @@ export default function FloorPlanning(navigation) {
             setDragTable(false)
             successOpen();
         }
+        // if (dragTableUpdate.status === 200) {
+        //     // Convert the 'data' field to JSON (it seems like a stringified array)
+        //     const tableData = dragTableUpdate.config.data;
+        //     setDragTable(false)
+        //     successOpen();
+        //     // Log the table data
+        // }
+        // if (dragTable === true) {
+
+        // }
     }
 
 
-    
-      // Create Success msg 
-  const successOpen = () => {
-    setopenSuccessMsg(!openSuccessMsg)
-  }
+
+    // Create Success msg 
+    const successOpen = () => {
+        setopenSuccessMsg(!openSuccessMsg)
+      }
     const SuccessPopup = () => {
         return (
             // success popup
-            <View style={[styles.flexrow, styles.justifyCenter]}>
+            <View style={[styles.flex, styles.justifyCenter, styles.alignCenter, styles.left50]}>
                 <View style={[styles.flexColumn, styles.alignCenter, styles.justifyCenter, styles.SuccessPopup]}>
                     <Text style={[styles.font24, styles.textBlack, styles.fontBold, styles.marBtm8]}>Success!</Text>
                     <Text style={[styles.font16, styles.textBlack, styles.marBtm26]}>Floor Planning Updated Successfully</Text>
-                    <TouchableOpacity style={styles.continueBtn} onPress={() => successOpen()}>
+                    <TouchableOpacity style={styles.continueBtn} onPress={() => [successOpen(), navigation.navigate('FloorPlanning')]}>
                         <Text style={[styles.textWhite, styles.font16]}>Continue</Text>
                     </TouchableOpacity>
                 </View>
@@ -229,7 +212,7 @@ export default function FloorPlanning(navigation) {
                         <View style={[styles.flexrow, styless.alignCenter, styless.justifyBetween]}>
                             <View style={[styles.width50]}>
                                 <Image source={(require("../../assets/images/dropdown.png"))} style={styles.dropdonwImg} />
-                                <ModalSelector
+                                {/* <ModalSelector
                                     data={tablenewarray}
                                     childrenContainerStyle={[styles.AddsignInput, styles.selectMainInput]}
                                     selectStyle={styles.selectText}
@@ -247,7 +230,27 @@ export default function FloorPlanning(navigation) {
                                             updateTableList(option, false)
                                         }
                                     }}
+                                /> */}
+                                <ModalSelector
+                                    data={tablenewarray}
+                                    childrenContainerStyle={StyleSheet.flatten([styles.AddsignInput, styles.selectMainInput])}  // Merge the styles into a single object
+                                    selectStyle={styles.selectText}
+                                    optionContainerStyle={styles.selectCont}
+                                    optionTextStyle={styles.textStyle}
+                                    initValueTextStyle={styles.textStyle}
+                                    overlayStyle={styles.overlayText}
+                                    cancelStyle={styles.selectCont}
+                                    cancelContainerStyle={styles.cancelCont}
+                                    cancelText={"Cancel"}
+                                    initValue={tableType}
+                                    selectedKey={selectedValue}
+                                    onChange={(option) => {
+                                        if (option.key) {
+                                            updateTableList(option, false);
+                                        }
+                                    }}
                                 />
+
                             </View>
                             <TouchableOpacity onPress={() => editDragTable()}>
                                 <View style={styles.textcontainer2}>
@@ -270,6 +273,7 @@ export default function FloorPlanning(navigation) {
                                     onMoveTable={onMoveTable}
                                 />
                             )}
+
                         </View>
                         {/* Show Square, Triangle and Circle with Empty and Occupied Status  Images Ends */}
                     </View>
@@ -279,6 +283,12 @@ export default function FloorPlanning(navigation) {
                         {SuccessPopup()}
                     </Modal>
                 }
+                <TouchableOpacity
+                    style={styles.continueBtn}
+                    onPress={() => setopenSuccessMsg(true)}  // Open the popup
+                >
+                    <Text style={[styles.textWhite, styles.font16]}>Show Success Popup</Text>
+                </TouchableOpacity>
             </ScrollView>
 
         </>

@@ -379,42 +379,48 @@ const UserRegistration = ({ navigation }) => {
     //upload image
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-            base64: true,
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+          base64: true,
         });
-
-
+    
+    
         if (!result.canceled) {
-            const fileSize = result?.assets[0]?.base64.length * 3 / 4 - 2; // Approximate size in bytes
-            if(fileSize > 1000000){
-                Alert.alert(	
-                    'Info',
-                    'Please select an image less than 1MB.',	
-                  [{ text: 'OK', onPress: () => {} }]	
-                );
-              }
-              else{
-                setImage(result.uri);
-                setImagebase64('data:image/jpg;base64,' + result?.assets[0]?.base64);
+          // Calculate the file size in bytes	
+          const fileSize = result?.assets[0]?.base64.length * 3 / 4 - 2; // Approximate size in bytes
+          try {
+            if (fileSize > 1000000) {
+              Alert.alert(
+                'Info',
+                'Please select an image less than 1MB.',
+                [{ text: 'OK', onPress: () => { } }]
+              );
+            }
+            else {
+              setImage(result?.assets[0]?.uri);
+              setImagebase64('data:image/jpg;base64,' + result?.assets[0]?.base64);
+              let fileExtension = result?.assets[0]?.uri.slice(result?.assets[0]?.uri.lastIndexOf('.') + 1);
+              setImageExtension(fileExtension)
+              // let profiledata = {
+              //     Image: "data:image/jpg;base64," + result?.base64,
+              //     ImageMimeType: "image/jpeg",
+              //     ImageFileName: "Image",
+              //     ImageExt: fileExtension
+              // }
+              // if (profiledata) {
     
-                let fileExtension = result?.assets[0]?.uri.slice(result?.assets[0]?.uri.lastIndexOf('.') + 1);
-                setImageExtension(fileExtension)
-                // let profiledata = {
-                //     Image: "data:image/jpg;base64," + result.base64,
-                //     ImageMimeType: "image/jpeg",
-                //     ImageFileName: "Image",
-                //     ImageExt: fileExtension
-                // }
-                // if (profiledata) {
+              // }
+            }
     
-                // }
-              }
-            
+          }
+          catch (error) {
+    
+          }
         }
-    };
+      };
+    
     const openGallery = () => {
         const options = {
             storageOptions: {
@@ -487,7 +493,7 @@ const successPaymentOpen = () => {
           <Image source={(require("../assets/images/placeordergif1.gif"))} style={[styles.marBtm20, styles.sucImg]} />
           <Text style={[styles.font24, styles.textBlack, styles.fontBold, styles.marBtm8]}>Success!</Text>
           <Text style={[styles.font16, styles.textBlack, styles.marBtm26]}>User Registered successfully</Text>
-          <TouchableOpacity style={styles.continueBtn} onPress={() => [successPaymentOpen(), navigation.navigate('Login')]}>
+          <TouchableOpacity style={styles.continueBtn} onPress={() => [successPaymentOpen(), navigation.navigate('LoginScreen')]}>
             <Text style={[styles.textWhite, styles.font16]}>Continue</Text>
           </TouchableOpacity>
         </View>
@@ -989,9 +995,9 @@ const successPaymentOpen = () => {
                         <View style={[style.saveAlreadyView, styles.pr15]}>
                             <ButtonSubmit mode="contained" onPress={doSubmit} style={style.signBtn}>Sign Up</ButtonSubmit>
                             <View style={[style.alreadyView, styles.wdth50]}>
-                                <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.flexrow, styles.justifyEnd, styles.alignCenter]}>
+                                <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={[styles.flexrow, styles.justifyEnd, styles.alignCenter]}>
                                     <Text style={[style.font12, style.textBlack]}>Already have an account? </Text>
-                                    <Text style={[styles.textPri, styles.font12]} onPress={() => navigation.navigate('Login')}>Sign In</Text>
+                                    <Text style={[styles.textPri, styles.font12]} onPress={() => navigation.navigate('LoginScreen')}>Sign In</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

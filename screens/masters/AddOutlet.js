@@ -495,8 +495,8 @@ export default function AddOutlet({ navigation, route }) {
   // ---------------------------------------- User Interface --------------------------------------------------------------------
   return (
     <>
-      {/* <Header heading={"Outlet"} /> */}
-      <View style={[styles.waterheader, styles.headerBlk]}>
+       <Header heading={"Outlet"} /> 
+      {/* <View style={[styles.waterheader, styles.headerBlk]}>
 
 <View style={styles.headerFlexCenter}>
   <View style={[styles.headerFlexCenter, styles.headerLeftSec]}>
@@ -742,7 +742,7 @@ export default function AddOutlet({ navigation, route }) {
     />
   </View>
 </View>
-</View>
+</View> */}
       <ScrollView style={styles.categoryBlkCon}>
         <View style={[styles.textcontainer1, styles.catSubBlk]}>
           <Text style={styles.textStyle1}>

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { NavigationProp } from '@react-navigation/native';
-
+import style from '../assets/css/style';
 
 const slides = [
     {
@@ -45,23 +45,38 @@ const IntroScreen = ({ navigation }) => {
     }, []);
   
     const onDone = () => {
-      navigation.navigate('Login');
+      navigation.navigate('LoginScreen');
     };
   
     const RenderItem = ({ item }) => {
       return (
-        <View style={styles.slide}>
-          <Image style={styles.image} source={item.image} />
-          <View style={styles.textContainer}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.text}>{item.text}</Text>
-            <TouchableOpacity onPress={onDone}>
-              <View style={styles.button}>
-                <Text style={styles.buttonText}>Get Started</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <View style={[style.flex1, style.intoBlk]}>
+                <Image style={[style.introImageStyle, style.resizeCover]} source={item.image} />
+                <View style={style.sliderText}>
+                    <Text style={style.introTitleStyle}>{item.title}</Text>
+                    <Text style={style.introTextStyle}>{item.text}</Text>
+                    <TouchableOpacity onPress={() => onDone()}>
+                        <View style={style.buttonCircle}>
+                            <Text style={style.getStartText}>
+                                Get Started
+                        </Text>
+                        </View>
+                    </TouchableOpacity>
+
+                </View>
+            </View>
+        // <View style={[style.flex1, style.intoBlk]}>
+        //   <Image style={style.image} source={item.image} />
+        //   <View style={style.sliderText}>
+        //     <Text style={style.title}>{item.title}</Text>
+        //     <Text style={style.text}>{item.text}</Text>
+        //     <TouchableOpacity onPress={onDone}>
+        //       <View style={style.button}>
+        //         <Text style={style.buttonText}>Get Started</Text>
+        //       </View>
+        //     </TouchableOpacity>
+        //   </View>
+        // </View>
       );
     };
   
@@ -72,8 +87,8 @@ const IntroScreen = ({ navigation }) => {
         showNextButton={false}
         showDoneButton={false}
         ref={(ref) => (slider = ref)}
-        dotStyle={styles.dotStyle}
-        activeDotStyle={styles.activeDotStyle}
+        dotStyle={style.dotStyle}
+        activeDotStyle={style.activeDotStyle}
       />
     )
 };

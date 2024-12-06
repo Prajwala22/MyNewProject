@@ -139,7 +139,6 @@ export default function Modifiers({ navigation, route }) {
                 item.itemName !== "" &&
                 item.price !== ""
         );
-        console.log(isValid, "isValid")
         if (isValid && modifierName !== '' && description !== '') {
             const jsonValue = await AsyncStorage.getItem('userInfo');
             const loginData = JSON.parse(jsonValue);
@@ -154,7 +153,6 @@ export default function Modifiers({ navigation, route }) {
                 modifierItems: filteredData,
                 outletId: outletId,
             };
-            console.log(myJson, "myJson")
               const result = await api.CreateMasterData(
                 endPoint.CREATE_MODIFIER,
                 token,
@@ -476,15 +474,18 @@ export default function Modifiers({ navigation, route }) {
     })
 
     //FIltered Items List
-    let modifierItemNameArray = itemsDataList.map((s, i) => {
-
-        let newData = {
-            key: i + 1,
-            label: s.itemName,
-            value: s.id
-        }
-        return newData
-    })
+    let modifierItemNameArray = [];
+    if (Array.isArray(itemsDataList)) {
+        modifierItemNameArray = itemsDataList.map((s, i) => {
+            let newData = {
+                key: i + 1,
+                label: s.itemName,
+                value: s.id
+            };
+            return newData;
+        });
+    }
+    
     //Filtered Ingredients List
     let modifierIngredientsArray = ingredientsDataList.map((s, i) => {
 

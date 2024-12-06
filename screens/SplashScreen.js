@@ -19,10 +19,10 @@ const SplashScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image
+      {/* <Image
         source={require('../assets/images/splash1.png')} // Your splash image
         style={styles.image}
-      />
+      /> */}
     </View>
   );
 };

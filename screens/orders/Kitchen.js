@@ -335,6 +335,7 @@ export default function Kitchen({ navigation, route }: { navigation: any, route:
     for (let i in printdata) {
       var itemcount = parseInt(i) + 1;
       const item = printdata[i];
+      console.log(item,"itemitemitem")
       if (itemorderType === 'Dine-in') {
         table = table + `
       <tr>
@@ -348,7 +349,7 @@ export default function Kitchen({ navigation, route }: { navigation: any, route:
       <tr>
       <td colspan="2">${itemcount}</td> 
       <td colspan="2"> ${item?.itemName}</td>
-      <td colspan="2">NA</td>
+      <td colspan="2">${item?.notes}</td>
       <td colspan="2"> ${item?.orderQuantity.toFixed(2)}</td> 
       </tr>`
       }

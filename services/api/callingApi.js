@@ -8,7 +8,6 @@ import { endPoint } from '../api/apiConstant';
 //Forgot Password API
 const ForgotPassword = async (email) => {
   const response = await api.get(`UserRegistration/ForgetPassword/${email}`)
-  console.log(response,"responseresponse")
   return response.data;
 
 }
@@ -19,7 +18,6 @@ const Login = async (emailId, password) => {
         userName: emailId,
         password: password,
       }));
-      console.log(JSON.stringify(response), "response");
       return response.data;
     } catch (error) {
       console.error("Error during login request:", error);
@@ -27,15 +25,22 @@ const Login = async (emailId, password) => {
   };
   
 
-const RefreshTokenGenerator = async (emailId, password) => {
-console.log(emailId, password,"rsponsedata")
-  const response = await api.post(`UserRegistration/RefreshToken/refreshToken`, JSON.stringify({
-    "userName": emailId,
-    "password": password
-  }));
-  console.log(response,"indexresponse")
-  return response.data;
-};
+  const RefreshTokenGenerator = async (emailId, password) => {
+    const response = await api.post(
+      `UserRegistration/RefreshToken/refreshToken`, 
+      JSON.stringify({
+        "userName": emailId,
+        "password": password
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json'  // Add the header here
+        }
+      }
+    );
+    return response.data;
+  };
+  
 //get Restaurant Details 
 const getRestaurantDetails = async (access_token, userId) => {
   const response = await api.get(`UserRestaurantLink/GetRestaurantByUserId/${userId}`, {
@@ -166,13 +171,15 @@ const voidOrder = async (access_token, userId, data) => {
 //Create Master Data
 const CreateMasterData = async (type, access_token, data) => {
   // Alert.alert('OrderI')
+  console.log(type,"safdfsd")
+  console.log(data,"datareturn")
+
   const response = await api.post(type, data, {
 
     headers: {
       'Authorization': `Bearer ${access_token}`
     },
   });
-
   return response.data
 };
 
@@ -290,7 +297,6 @@ const GetPrintDesign = async (access_token, OutletId) => {
 };
 //Get All Supplier Master 
 const GetProductSupplierMaster = async (access_token, OutletId) => {
-  console.log(access_token,":access_token:",OutletId)
   const response = await api.get(`Inventory/GetAllProductSupplierMaster/${OutletId}`, {
     headers: {
       'Authorization': `Bearer ${access_token}`

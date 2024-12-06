@@ -58,12 +58,14 @@ export default function SidemeuItemsScreenHeader({ heading, ...props }) {
     const userRoleId = await AsyncStorage.getItem('userRoleId')
     setuserRoleId(userRoleId)
     const jsonValue = await AsyncStorage.getItem('userInfo')
+    console.log(jsonValue,"jsonValuejsonValue")
     let loginData = JSON.parse(jsonValue);
     let roleName = loginData.roleName
     const restaurantName = await AsyncStorage.getItem('restaurantName')
     const outletName = await AsyncStorage.getItem('outletName')
     const outletAddress = await AsyncStorage.getItem('outletAddress')
     const outletid = await AsyncStorage.getItem('restaurantId')
+    console.log(outletid,"outletidoutletid")
     const checkoutletid = await AsyncStorage.getItem('checkoutletId')
     const prodRestName = await AsyncStorage.getItem('RestaurantName')
     setRestName(prodRestName)

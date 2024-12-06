@@ -87,8 +87,8 @@ export default function SalesbyItems({ navigation, route }: { navigation: any, r
     setSelectedEndDate(null);
     setSelectedStartDate(null);
     fetchData(); // Call the async function
-    
-    
+
+
   }, [isFocused]);
   const getOutletList = async () => {
     const jsonValue: any = await AsyncStorage.getItem('userInfo')
@@ -201,9 +201,8 @@ export default function SalesbyItems({ navigation, route }: { navigation: any, r
     }
   });
   const categorySalesCountList = () => {
-
-    let dineinFilter = data.filter((item) => item.items[0].orderType === "Dine-in")
-    let takeAwayFilter = data.filter((item) => item.orderType === "Walk-in")
+    let dineinFilter = Array.isArray(data) ? data.filter((item) => item && item.orderType === "Dine-in") : [];
+    let takeAwayFilter = Array.isArray(data) ? data.filter((item) => item.orderType === "Walk-in") : [];
     setDineinSalesCount(dineinFilter.length >= 0 ? dineinFilter.length : 0)
     setTakeAwaySalesCount(takeAwayFilter.length >= 0 ? takeAwayFilter.length : 0)
 
@@ -236,11 +235,23 @@ export default function SalesbyItems({ navigation, route }: { navigation: any, r
       color: '#008960',
       gradientCenterColor: '#008960',
     },
+    {
+      value: takeawaySalesCount,
+      color: '#E83B42',
+      gradientCenterColor: '#E83B42',
+    },
+    // Optionally, you can keep the zero-value slices for consistency or placeholder if needed
     { value: 0, color: '#959FAD', gradientCenterColor: '#959FAD' },
-    { value: takeawaySalesCount, color: '#E83B42', gradientCenterColor: '#E83B42' },
     { value: 0, color: '#CCCCCC', gradientCenterColor: '#CCCCCC' },
   ];
 
+  // Filter out slices with zero value
+  const filteredPieData = pieData.filter(slice => slice.value > 0);
+
+  // Fallback to a default slice if filteredPieData is empty
+  const finalPieData = filteredPieData.length > 0 ? filteredPieData : [
+    { value: 1, color: '#CCCCCC', gradientCenterColor: '#CCCCCC' }
+  ];
 
 
   //--------------------------- Export Item Sales  ----------------------------------
@@ -326,10 +337,12 @@ export default function SalesbyItems({ navigation, route }: { navigation: any, r
                     </View>
                   </View>
                   <View style={[styles.dashrgtCon, styles.flexrow, styles.justifyEnd, styles.padL10]}>
-                    <PieChart
-                      data={pieData}
-                      radius={90}
-                    />
+                    {(dineinSalesCount > 0 || takeawaySalesCount > 0) && (
+                      <PieChart data={pieData} radius={90} />
+                    )}
+
+
+
                   </View>
                 </View>
               </View>
@@ -339,7 +352,7 @@ export default function SalesbyItems({ navigation, route }: { navigation: any, r
 
             <View style={[styles.textcontainer1, styles.catSubBlk]}>
               <Text style={styles.textStyle1}>
-                Sales By Items - {selectedOutletName ? selectedOutletName : outlet }
+                Sales By Items - {selectedOutletName ? selectedOutletName : outlet}
               </Text>
             </View>
 
@@ -362,7 +375,7 @@ export default function SalesbyItems({ navigation, route }: { navigation: any, r
                       cancelContainerStyle={styles.cancelCont}
                       cancelText={"Cancel"}
                       // initValue={outletName}
-                      initValue={outletDataArray.find(item => item.value === defauloutlet)?.label || ''}  
+                      initValue={outletDataArray.find(item => item.value === defauloutlet)?.label || ''}
                       selectedKey={outletKey}
                       onChange={(option) => {
                         if (option.key) {
@@ -376,50 +389,50 @@ export default function SalesbyItems({ navigation, route }: { navigation: any, r
 
                   </View>
                 </View>
-                               <View style={[styles.width170px, styles.padL10]}>
-  <TouchableOpacity style={[styles.stateDateCon, styles.flexrow, styles.alignCenter]}
-    onPress={() => showDateTimePicker('startDate')}>
-    <CalenderIcon />
-    {selectedStartDate ?
-      <View style={[styles.paddL5]}>
-        <Text style={[styles.font9, styles.textDate]}>Start Date</Text>
-        <Text style={[styles.font10, styles.textBlack]}>{selectedStartDate ?? null}</Text>
-      </View> : <View style={[styles.paddL5]}>
-        <Text style={[styles.font10, styles.textDate]}>Start Date</Text>
-      </View>
-    }
-  </TouchableOpacity>
-  {selectedEndDate < selectedStartDate && (
-    <Text style={styles.errorText}>Start date cannot be greater than end date</Text>
-  )}
-</View>
-<View style={[styles.width170px, styles.paddL10]}>
-  <TouchableOpacity style={[styles.stateDateCon, styles.flexrow, styles.alignCenter]}
-    onPress={() => showDateTimePicker('endDate')}>
-    <CalenderIcon />
-    {selectedEndDate ?
-      <View style={[styles.paddL5]}>
-        <Text style={[styles.font9, styles.textDate]}>End Date</Text>
-        <Text style={[styles.font10, styles.textBlack]}>{selectedEndDate ?? null}</Text>
-      </View> : <View style={[styles.paddL5]}>
-        <Text style={[styles.font10, styles.textDate]}>End Date</Text>
-      </View>
-    }
-  </TouchableOpacity>
-</View>
+                <View style={[styles.width170px, styles.padL10]}>
+                  <TouchableOpacity style={[styles.stateDateCon, styles.flexrow, styles.alignCenter]}
+                    onPress={() => showDateTimePicker('startDate')}>
+                    <CalenderIcon />
+                    {selectedStartDate ?
+                      <View style={[styles.paddL5]}>
+                        <Text style={[styles.font9, styles.textDate]}>Start Date</Text>
+                        <Text style={[styles.font10, styles.textBlack]}>{selectedStartDate ?? null}</Text>
+                      </View> : <View style={[styles.paddL5]}>
+                        <Text style={[styles.font10, styles.textDate]}>Start Date</Text>
+                      </View>
+                    }
+                  </TouchableOpacity>
+                  {selectedEndDate < selectedStartDate && (
+                    <Text style={styles.errorText}>Start date cannot be greater than end date</Text>
+                  )}
+                </View>
+                <View style={[styles.width170px, styles.paddL10]}>
+                  <TouchableOpacity style={[styles.stateDateCon, styles.flexrow, styles.alignCenter]}
+                    onPress={() => showDateTimePicker('endDate')}>
+                    <CalenderIcon />
+                    {selectedEndDate ?
+                      <View style={[styles.paddL5]}>
+                        <Text style={[styles.font9, styles.textDate]}>End Date</Text>
+                        <Text style={[styles.font10, styles.textBlack]}>{selectedEndDate ?? null}</Text>
+                      </View> : <View style={[styles.paddL5]}>
+                        <Text style={[styles.font10, styles.textDate]}>End Date</Text>
+                      </View>
+                    }
+                  </TouchableOpacity>
+                </View>
 
-<View style={[styles.paddL10]}>
-  <TouchableOpacity
-    style={[styles.SearchBtn, selectedEndDate < selectedStartDate && styles.disabledBtn]}
-    disabled={selectedEndDate < selectedStartDate}
-    onPress={() => {
-      // Perform the search
-      getSalesbyCategoryListOutlet();
-    }}
-  >
-    <Text style={[styles.textWhite, styles.font11]}>Filter</Text>
-  </TouchableOpacity>
-</View>
+                <View style={[styles.paddL10]}>
+                  <TouchableOpacity
+                    style={[styles.SearchBtn, selectedEndDate < selectedStartDate && styles.disabledBtn]}
+                    disabled={selectedEndDate < selectedStartDate}
+                    onPress={() => {
+                      // Perform the search
+                      getSalesbyCategoryListOutlet();
+                    }}
+                  >
+                    <Text style={[styles.textWhite, styles.font11]}>Filter</Text>
+                  </TouchableOpacity>
+                </View>
 
               </View>
               <TouchableOpacity onPress={() => exportXlsx()} style={[styles.flexrow, styles.alignCenter, styles.height35]}>
@@ -456,7 +469,7 @@ export default function SalesbyItems({ navigation, route }: { navigation: any, r
                     )
                     }
                     {
-                      isDataPresent && data.length != 0 &&
+                      isDataPresent && data.length > 0 &&
                       data.map((item, index) => (
                         <View style={[styles.tableRow, { borderColor: '#F5F3F6' }]}>
                           <DataTable.Row style={styles.datatableextraline}>

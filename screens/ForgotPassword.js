@@ -34,7 +34,6 @@ const ForgotPassword = ({ navigation }) => {
         let loginData = JSON.parse(jsonValue);
         setEmail(loginData?.username)
         const result = await api.ForgotPassword(email?.value);
-        console.log(result,"result");
         if (result.success) {
            
             Alert.alert('we have sent an email with instructions to reset the password. Kindly check')
@@ -83,7 +82,7 @@ const ForgotPassword = ({ navigation }) => {
                     </View>
                 ) : null}
                 <Button mode="contained" onPress={doSubmit} style={[style.signBtn, style.resetBtn]}>Reset Password</Button>
-                <Text style={[style.backLogin]} onPress={() => navigation.navigate('Login')}>Back to Log in</Text>
+                <Text style={[style.backLogin]} onPress={() => navigation.navigate('LoginScreen')}>Back to Log in</Text>
 
             </View>
 

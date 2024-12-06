@@ -105,11 +105,11 @@ export default function EditFormAccess({ navigation, route }: { navigation: any,
     setRoleData(result.data)
     if (result.data?.length > 0) {
 
-      const filterCashierPermissions = result.data.filter((item) => item.roleId == constRoleId.CASHIER_ID).map(({ permissions }) => ({ permissions }))
+      const filterCashierPermissions = result.data.filter((item:any) => item.roleId == constRoleId.CASHIER_ID).map(({ permissions }) => ({ permissions }))
       setCashierPermissions(filterCashierPermissions)
-      const filterCashier = result.data.filter((item) => item.roleId == '638094a1a4557ddb2128e50d').map(({ permissions }) => ({ permissions }))
+      const filterCashier = result.data.filter((item:any) => item.roleId == '638094a1a4557ddb2128e50d').map(({ permissions }) => ({ permissions }))
 
-      const filterBartenderresult = result.data.filter((item) => item.roleId == constRoleId.BARTENDER_ID).map(({ permissions }) => ({ permissions }));
+      const filterBartenderresult = result.data.filter((item:any) => item.roleId == constRoleId.BARTENDER_ID).map(({ permissions }) => ({ permissions }));
       setBartenderPermissions(filterBartenderresult)
 
       if (filterBartenderresult[0]?.permissions[9]?.formId === formId.MASTERS && filterBartenderresult[0]?.permissions[9]?.isFormAccess === true) {
@@ -122,7 +122,7 @@ export default function EditFormAccess({ navigation, route }: { navigation: any,
       setDataPreset(true);
     }
   }
-  const toggleSwitchDashboard = (formId) => {
+  const toggleSwitchDashboard = (formId:any) => {
 
     setDashboard(previousState => !previousState);
   }
@@ -164,7 +164,7 @@ export default function EditFormAccess({ navigation, route }: { navigation: any,
     let outletId = loginData.outletId;
 
     const result = await api.getAllMasterData(token, endPoint.GET_FORM_NAME_LIST);
-    const formIdFilter = result.data.map((item) => item.formId)
+    const formIdFilter = result.data.map((item:any) => item.formId)
     setFormIdData(formIdFilter)
     if (result.data.length === 0) {
       setDataPreset(false)

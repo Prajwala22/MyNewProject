@@ -19,9 +19,14 @@ export default StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
+    top: 0,
+    left: 0,
   },
   resizeCover: {
     resizeMode: 'cover'
+  },
+  resizeContain: {
+    resizeMode: 'contain'
   },
   sliderText: {
     width: 365,
@@ -304,6 +309,9 @@ export default StyleSheet.create({
   logincontainer2: {
     flex: 1.5,
     height: '100%',
+  },
+  flex: {
+    display: 'flex',
   },
   flexrow: {
     flexDirection: 'row',
@@ -817,7 +825,7 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 25,
+    paddingTop: 0,
     borderBottomWidth: 1,
     borderBottomColor: '#F2F2F2',
     borderStyle: 'solid',
@@ -1099,12 +1107,16 @@ export default StyleSheet.create({
     height: 45,
     elevation: 0,
   },
+  searchCon: {
+    backgroundColor: 'red',
+  },
   searchInput: {
     color: '#484D54',
     fontSize: 14,
     lineHeight: 17,
     fontWeight: '400',
-    marginLeft: -13
+    marginLeft: -10,
+    marginTop: -6
   },
   changeCategoryBlk: {
     marginTop: 9,
@@ -3475,6 +3487,11 @@ export default StyleSheet.create({
     top: 9,
     left: 9,
   },
+  left50: {
+    position: 'absolute',
+    top: 9,
+    left: 150,
+  },
   positionabsolute: {
     position: 'absolute',
     width: '100%',
@@ -3657,5 +3674,10 @@ export default StyleSheet.create({
   padt15: {
     paddingTop: 15
   },
+
+  
   // add modifier
-});
+  popupheight: {
+      height: Dimensions.get('window').height - 150,
+  }
+}); 

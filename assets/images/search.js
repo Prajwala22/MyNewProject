@@ -20,7 +20,7 @@ const SearchIcon = (props) => (
         stroke="#747474"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
+        strokeWidth={1.5}
       />
       <Line
         id="Line_233"
@@ -32,7 +32,7 @@ const SearchIcon = (props) => (
         stroke="#747474"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth={2}
+        strokeWidth={1.5}
       />
     </G>
   </Svg>

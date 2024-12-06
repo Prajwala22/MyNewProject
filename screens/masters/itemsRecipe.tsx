@@ -267,7 +267,7 @@ export default function ItemsRecipe({ navigation, route }: { navigation: any, ro
 
             }
             const result = await api.CreateMasterData(endPoint.CREATE_ITEMS, token, myJson);
-
+console.log(result,"menulitemlist")
             if (itemDataLength >= 1) {
                 setopenSuccessMsg(true)
                 setCatKey(0);

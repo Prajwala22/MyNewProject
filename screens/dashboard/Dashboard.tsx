@@ -213,7 +213,6 @@ export default function Dashboard({ navigation, route }) {
             toDate: null,
             fromDate: null,
         }
-        console.log(data,"dashboarddata")
         const result = await api.GetOrdersByCount(access_token, data);
         if (JSON.stringify(result.data) === null || JSON.stringify(result.data) === "null" || result.data === "") {
             setIsrefreshingresult(false)

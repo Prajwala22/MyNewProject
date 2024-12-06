@@ -289,7 +289,7 @@ export default function ItemUpdateRecipe({ navigation, route }: { navigation: an
                 <View style={[styles.flexColumn, styles.alignCenter, styles.justifyCenter, styles.SuccessPopup]}>
                     <Text style={[styles.font24, styles.textBlack, styles.fontBold, styles.marBtm8]}>Success!</Text>
                     <Text style={[styles.font16, styles.textBlack, styles.marBtm26]}>Item Updated Successfully</Text>
-                    <TouchableOpacity style={styles.continueBtn} onPress={() => [successOpenUpdate(), navigation.navigate('Menu')]}>
+                    <TouchableOpacity style={styles.continueBtn} onPress={() => [successOpenUpdate(), navigation.navigate('MenuCategory')]}>
                         <Text style={[styles.textWhite, styles.font16]}>Continue</Text>
                     </TouchableOpacity>
                 </View>
@@ -1058,7 +1058,7 @@ export default function ItemUpdateRecipe({ navigation, route }: { navigation: an
                     <View style={[styles.footerBtn, styles.flexrow, styles.justifyCenter]}>
                         <TouchableOpacity>
                             <View>
-                                <Text style={[styles.cancelBtn, styles.marRgt18]} onPress={() => navigation.navigate('Menu')}>Cancel</Text>
+                                <Text style={[styles.cancelBtn, styles.marRgt18]} onPress={() => navigation.navigate('MenuCategory')}>Cancel</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.UpdateBtn} onPress={updateItems}>

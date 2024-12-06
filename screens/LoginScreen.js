@@ -11,8 +11,12 @@ import Button from '../components/Button';
 import Colors from '../screens/constants/colors';
 import api from '../services/api/callingApi';
 import { constRoleId } from "../screens/common/RoleConstants"
+import { useNavigation } from '@react-navigation/native';
+import SideMenu from '../screens/orders/SideMenu';
 
 const LoginScreen = ({ navigation }) => {
+    const [refreshKey, setRefreshKey] = useState(0);
+
    const { signIn } = useContext(AuthContext);
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
@@ -35,6 +39,10 @@ const LoginScreen = ({ navigation }) => {
 useEffect(() => {
     getSavedUser();
 }, []);
+
+const reloadScreen = () => {
+    navigation.replace('LoginScreen');
+  };
 
 const getSavedUser = async () => {
     const jsonValue = await AsyncStorage.getItem('userEmail')
@@ -78,6 +86,7 @@ const passwordValidator = (password) => {
 * Button Login pressed 
 */
 const doLogin = async () => {
+    setLoading(true)
     const invalidMailErrorMsg = invalidEmailValidator(email.value)
     const invalidPaswwordEErrorMsg = invalidPasswordValidator(password.value)
 
@@ -93,7 +102,6 @@ const doLogin = async () => {
         setPassword({ ...password, error: passworErrorMsg })
     }
     const result = await api.Login(email.value, password.value);
-    console.log(result,"resultresultresult")
     if (result?.data === null && password.value != "" && email.value != "") {
         setLoading(false);
         Toast.show("Username Or Password is incorrect", {
@@ -129,8 +137,9 @@ const doLogin = async () => {
                 Toast.show('User Logged-In Successfully', {
                     duration: Toast.durations.LONG,
                 });
-               // navigation.navigate('Dashboard')
-                 signIn(result.data.userId)
+                console.log("Login Vi")
+                navigation.navigate(SideMenu);
+                //signIn(result.data.userId)
                 rememberMe()
             }
         }
@@ -235,6 +244,7 @@ const doLogin = async () => {
         }
         //Company Admin Login 
         else if (result.data.userRoleId === constRoleId.COMPANY_ADMIN_ID) {
+            console.log(result.data,"result.data")
             var myJson1 = {
                 username: email.value,
                 password: password.value,
@@ -262,9 +272,32 @@ const doLogin = async () => {
             Toast.show('User Logged-In Successfully', {
                 duration: Toast.durations.LONG,
             });
-//   navigation.navigate('Dashboard')
-             signIn(result.data.userId)
-            rememberMe()
+            console.log("via email and password");
+            navigation.navigate('SideMenu');
+            setTimeout(() => {
+                navigation.navigate('SideMenu');  // Navigate to SideMenu after login simulation
+                console.log("after via email and password");
+              }, 1000);
+            //signIn(result.data.token)
+            //rememberMe()
+
+            
+            if (isSelected) {
+                if (email.value != '' && password.value != '') {
+                    try {
+                        const jsonValue = JSON.stringify(email.value)
+                        const jsonPasswordValue = JSON.stringify(password.value)
+                        await AsyncStorage.setItem('userEmail', jsonValue)
+                        await AsyncStorage.setItem('password', jsonPasswordValue)
+                    } catch (e) {
+                        // saving error
+                    }
+                }
+            }
+            console.log("via email and password", isSelected);
+            console.log("via email and password", JSON.stringify(email.value));
+            console.log("via email and password", JSON.stringify(password.value));
+
         }
     }
 
@@ -301,6 +334,13 @@ const rememberMe = async () => {
 
 
 }
+
+const renderLoader = () => (
+    <View style={styless.loaderContainer}>
+      <Image source={require('../assets/images/Watermelon-Loader-Gif.gif')} style={styless.loaderIcon} />
+    </View>
+  );
+  
 //Reset Form
 const resetForm = () => {
 setEmail({value: "", error: ""})
@@ -308,7 +348,9 @@ setPassword({value: "", error: ""})
 }
 //------------------------------------------ Usrer Interface -----------------------------------------------------------------------
 return (
+    
     <KeyboardAwareScrollView style={styless.loginBg}>
+
         {isLoading && email.value != '' && password.value != '' ?
             <View style={[styless.flex1, styless.flexrow, styless.alignCenter, styless.justifyCenter, styless.loaderPopupBlk]}>
                 <Image source={require('../assets/images/Watermelon-Loader-Gif.gif')} style={styless.loaderIcon} />

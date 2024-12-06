@@ -150,7 +150,6 @@ export default function MapAddingData({ route, navigation }) {
 
         }
         const supplierResult = await api.GetAllSupplier(token, outletId);
-        console.log(supplierResult.data.length,"supplierResult");
         if(supplierResult.data.length > 0){
             setSupDataAdded(true)
             setSupplierDataLength(supplierResult.data?.length)

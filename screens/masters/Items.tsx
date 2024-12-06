@@ -92,6 +92,8 @@ export default function Items({ navigation, route }: { navigation: any, route: a
       OutletId: outletId,
     }
     const result = await api.CreateMasterData(endPoint.GET_ITEMS, token, myJson);
+    console.log(result ,"filterdatafilterdata")
+
     setItemLength(result.data.length)
     if (result.data.length === 0) {
       Toast.show("Some Error occured. Please try again.");
@@ -99,6 +101,7 @@ export default function Items({ navigation, route }: { navigation: any, route: a
     } else {
       if (categoyitem) {
         const filterdata = result.data.filter(item => item.itemCategoryId == categoyitem)
+        console.log(filterdata ,"filterdatafilterdata")
         setData(filterdata);
         setcategoryIdItemclear(categoyitem)
       } else {

@@ -46,7 +46,7 @@ export default function userSales({ navigation, route }: { navigation: any, rout
   );
   const from = page * numberOfItemsPerPage;
   var count = from + 1;
-  const to = Math.min((page + 1) * numberOfItemsPerPage, data.length);
+  const to = Math.min((page + 1) * numberOfItemsPerPage, data?.length);
   const [userRoleId, setuserRoleId] = useState('')
   const [outletId, setOutletId] = useState('');
   const [restaurant, setRestaurant] = useState('');
@@ -127,17 +127,15 @@ export default function userSales({ navigation, route }: { navigation: any, rout
     }
   }, [isFocused]);
   const getOutletList = async () => {
-    const jsonValue: any = await AsyncStorage.getItem('userInfo')
-    const restaurantId: any = await AsyncStorage.getItem('restaurantId')
+    const jsonValue: any = await AsyncStorage.getItem('userInfo');
+    const restaurantId: any = await AsyncStorage.getItem('restaurantId');
     let loginData = JSON.parse(jsonValue);
     let token = loginData.token;
     const result = await api.getAllMasterData(token, endPoint.GET_OUTLETS_BY_RESTAURANT + restaurantId);
     if (result.success === true) {
-      setOutletData(result.data.outlets)
+      setOutletData(result.data?.outlets || []);
     }
-    else {
-    }
-  }
+  };
 
   let outletDataArray = outletData.map((s, i) => {
 
@@ -156,37 +154,37 @@ export default function userSales({ navigation, route }: { navigation: any, rout
       setData([])
     }
   }, [isFocused]);
-  const getUserSalesList = async (orderTypeKey) => {
-    setIsrefreshingresult(true)
-    const jsonValue: any = await AsyncStorage.getItem('userInfo')
+    const getUserSalesList = async () => {
+    setIsrefreshingresult(true);
+    const jsonValue: any = await AsyncStorage.getItem('userInfo');
     let loginData = JSON.parse(jsonValue);
     let token = loginData.token;
     let outletId = loginData.outletId;
-    const outletName = await AsyncStorage.getItem('outletName')
-    SetOutlet(outletName)
+    const outletName = await AsyncStorage.getItem('outletName');
+    SetOutlet(outletName);
     let myJson = {
       outletId: outletField ? outletField : loginData.outletId,
       toDate: selectedEndDate,
       fromDate: selectedStartDate
-    }
-    const result = await api.CreateMasterData(endPoint.GET_ORDER_BY_COUNT, token, myJson)
-    if (result.success === false) {
-      setIsrefreshingresult(false)
+    };
+    const result = await api.CreateMasterData(endPoint.GET_ORDER_BY_COUNT, token, myJson);
+    const responseData = result.data;
+
+    if (responseData.success  === false) {
+      setIsrefreshingresult(false);
       setDataPreset(false);
     } else {
+      const dineinData = result.data?.todayDineInSalesList || [];
+      const takeawayData = result.data?.todayTakeAwaySalesList || [];
       setData(result.data);
       setDataPreset(true);
-      setDineinSales(result.data.todayDineInSalesList)
-      setTakeAwaySales(result.data.todayTakeAwaySalesList)
-      setIsrefreshingresult(false)
-      if (orderTypeKey === 1) {
-        setOrderTypeKey(1)
-      }
-      else {
-        setOrderTypeKey(2)
-      }
+      setDineinSales(dineinData);
+      setTakeAwaySales(takeawayData);
+      setIsrefreshingresult(false);
+      setOrderTypeKey(orderTypeKey === 1 ? 1 : 2);
     }
   }
+  
   //Select Date Functionality
   const showDateTimePicker = (type: any) => {
     if (type === 'startDate') {
@@ -373,12 +371,15 @@ export default function userSales({ navigation, route }: { navigation: any, rout
                     </View>
                   </View>
                   <View style={[styles.dashrgtCon, styles.flexrow, styles.justifyEnd]}>
+                  {dineinUserSalesCount > 0 && takeawayUserSalesCount > 0 && barData && barData.length > 0 && (
+
                     <BarChart
                       data={barData}
                       width={150}
                       height={200}
                       textFontSize={20}
                     />
+                  )}
                   </View>
                 </View>
               </View>

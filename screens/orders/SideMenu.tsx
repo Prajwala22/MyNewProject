@@ -17,9 +17,9 @@ import ReportIcon from '../../assets/images/Report Icon.js';
 import UserSettingsIcon from '../../assets/images/user_settings.js';
 import ViewFormAccess from '../../components/ViewFormAccess';
 import { AuthContext } from '../../App';
-import DineIn from '../../screens/orders/DineIn';
-import Online from '../../screens/orders/Online';
-import TakeAway from '../../screens/orders/TakeAway';
+import DineIn from './DineIn';
+import Online from './Online';
+import TakeAway from './TakeAway';
 import { endPoint } from '../../services/api/apiConstant';
 import api from '../../services/api/callingApi';
 import Dashboard from '../dashboard/Dashboard';
@@ -27,17 +27,17 @@ import ReportsDashboard from '../dashboard/ReportsDashboard';
 import MapAddingData from '../initialSetup/MapAddingData';
 import SelectOutlet from '../initialSetup/SelectOutLet';
 import SelectRestaurant from '../initialSetup/SelectRestaurant';
-import Kitchen from '../orders/Kitchen';
+import Kitchen from './Kitchen';
 import OrderStatus from '../masters/OrderStatus';
 import TableDetails from '../masters/TableDetails';
 import Role from '../Role';
 import UpdateProfile from '../UpdateProfile';
 import Users from '../Users';
 import AddOutlet from '../masters/AddOutlet';
-import Bar from '../orders/Bar';
+import Bar from './Bar';
 import Category from '../masters/Category';
 import Discount from '../masters/Discount';
-import EditFormAccess from '../../screens/home/EditFormAccess';
+import EditFormAccess from '../home/EditFormAccess';
 import Inventory from './Inventory';
 import Items from '../masters/Items';
 import ItemsRecipe from '../masters/itemsRecipe';
@@ -45,14 +45,14 @@ import ItemStatus from '../masters/ItemStatus';
 import ItemUpdateRecipe from '../masters/ItemUpdateRecipe';
 import Menu from '../masters/Menu';
 import Modifiers from '../masters/Modifiers';
-import Orders from '../orders/Orders';
+import Orders from './Orders';
 import PaymentsChart from '../dashboard/PaymentsChart';
-// import PrintDesign from './PrintDesign';
-import Productstock from '../../screens/home/Productstock';
+ import PrintDesign from '../home/PrintDesign';
+import Productstock from '../home/Productstock';
 import salesbyCategories from '../dashboard/salesbycategories';
 import SalesbyItems from '../dashboard/SalesbyItems';
-import SupplierOrders from '../../screens/home/SupplierOrders';
-import Supplierstock from '../../screens/home/Supplierstock';
+import SupplierOrders from '../home/SupplierOrders';
+import Supplierstock from '../home/Supplierstock';
 import TableTypeList from '../masters/TableTypeList';
 import Tax from '../masters/Tax';
 import TaxSetUp from '../masters/TaxSetUp';
@@ -64,9 +64,15 @@ import FloorPlanning from '../masters/FloorPlanning';
 import { constRoleId } from "../common/RoleConstants";
 import AddModifier from '../masters/AddModifier';
 import PromoCode from '../masters/PromoCode';
-import SideMenuHeaderMaster from '../../components/sideMenuHeaderMaster';
-
+import LoginScreen from '../LoginScreen';
+import UserRegistration from '../UserRegistration';
+import ForgotPassword from '../ForgotPassword';
+// import SideMenuHeaderMaster from '../../components/sideMenuHeaderMaster';
+import ViewRole from '../ViewRole';
+import { useNavigation } from '@react-navigation/native';
+import IntroScreen from '../IntroScreen';
 export default function SideMenu({ navigation, route }: { navigation: any, route: any }) {
+  console.log("calling Sidemenu:::::")
   const Drawer = createDrawerNavigator();
   const version = Constants.manifest?.version;
   const [isSelected, setSelection] = useState(false);
@@ -189,33 +195,63 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
     }
   };
 
-  //Method for navigating to login page
-  const logout = async (navigation) => {
-    await AsyncStorage.removeItem('userToken')
-    await AsyncStorage.setItem('checkoutletId', '')
-    await AsyncStorage.setItem('restaurantName', '')
-    await AsyncStorage.setItem('RestaurantName', '')
-    await AsyncStorage.setItem('outletName', '')
-    navigation.navigate('Splash')  
-  }
+  const logout = async () => {
+    await AsyncStorage.clear();
+    await AsyncStorage.removeItem('userToken');
+    const keys = await AsyncStorage.getAllKeys();
+    console.log("All AsyncStorage keys:", keys);
+    const userToken = await AsyncStorage.getItem('userToken');
+    console.log('User Token after setting:', userToken);  // Should log 'abcd'
+    // navigation.navigate("IntroScreen");
+    setTimeout(() => {
+      console.log("LoginScreen")
+      navigation.navigate('LoginScreen');
+      console.log("After LoginScreen")
 
+   }, 0);
+};
+
+
+  // const logout = async () => {
+  //   await AsyncStorage.setItem('userToken', '');
+  //   await AsyncStorage.setItem('restaurantName', '');
+  //   await AsyncStorage.setItem('RestaurantName', '');
+  //   await AsyncStorage.setItem('outletName', '');
+  
+  //   try {
+  //     console.log(navigation,"rtytghj");
+  //     signOut(); 
+  //     navigation.navigate("Login")
+      
+  //      // Call the signOut method to update the state
+  //     // if (navigation) {
+  //     //   navigation.reset({
+  //     //     index: 0,
+  //     //     routes: [{ name: 'Login' }],
+  //     //   });
+  //     // } else {
+  //     //   console.error('Navigation is not available');
+  //     // }
+  //   } catch (e) {
+  //     console.error('Error logging out:', e);
+  //   }
+  // };
+  
   //Logout popup alert
-  const logoutAlert = (navigation) =>
-    Alert.alert('Logout', 'Are you sure you want to Logout?', [
-      {
-        text: 'Cancel',
-        onPress: () => {
-        },
-        style: 'cancel',
+ const logoutAlert = () =>
+  Alert.alert('Logout', 'Are you sure you want to Logout?', [
+    {
+      text: 'Cancel',
+      onPress: () => {
       },
-      {
-        text: 'OK',
-        onPress: () => {
-          logout(navigation); // Pass the navigation object here
-        },
-      },
-    ]);
-
+      style: 'cancel',
+    },
+    {
+      text: 'OK',
+      onPress:
+        logout
+    },
+  ]);
   /// Get Login User Details
   useEffect(() => {
     getUserDetails();
@@ -242,43 +278,43 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
     const permissions = await AsyncStorage.getItem('permissions')
     const loginPermissions = JSON.parse(permissions)
     //Checking Permission for Outlets
-    const fetchOutletsStatus = loginPermissions?.filter((item) => item.formId === formId.OUTLETS && item.isFormAccess === true)
+    const fetchOutletsStatus = loginPermissions?.filter((item:any) => item.formId === formId.OUTLETS && item.isFormAccess === true)
     setOutletsPermissions(fetchOutletsStatus)
     //Checking Permissions for Modifiers
-    const fetchMenuStatus = loginPermissions?.filter((item) => item.formId === formId.MODIFIERS && item.isFormAccess === true)
+    const fetchMenuStatus = loginPermissions?.filter((item:any) => item.formId === formId.MODIFIERS && item.isFormAccess === true)
     setMenuPermissions(fetchMenuStatus)
     //Checking Permissions for Masters
-    const fetchMastersStatus = loginPermissions?.filter((item) => item.formId === formId.MASTERS && item.isFormAccess === true)
+    const fetchMastersStatus = loginPermissions?.filter((item:any) => item.formId === formId.MASTERS && item.isFormAccess === true)
     setMasterPermissions(fetchMastersStatus)
     //Checking Permissions for Itemstatus
-    const fetchItemStatus = loginPermissions?.filter((item) => item.formId === formId.ITEMSTATUS && item.isFormAccess === true)
+    const fetchItemStatus = loginPermissions?.filter((item:any) => item.formId === formId.ITEMSTATUS && item.isFormAccess === true)
     setItemStatusPermissions(fetchItemStatus)
     //Checking Permissions for Discount
-    const fetchDiscountStatus = loginPermissions?.filter((item) => item.formId === formId.DISCOUNTS && item.isFormAccess === true)
+    const fetchDiscountStatus = loginPermissions?.filter((item:any) => item.formId === formId.DISCOUNTS && item.isFormAccess === true)
     setDiscountPermissions(fetchDiscountStatus)
     //Checking Permissions for Orderstatus
-    const fetchOrderStatus = loginPermissions?.filter((item) => item.formId === formId.ORDERSTATUS && item.isFormAccess === true)
+    const fetchOrderStatus = loginPermissions?.filter((item:any) => item.formId === formId.ORDERSTATUS && item.isFormAccess === true)
     setOrderStatusPermissions(fetchOrderStatus)
     //Checking Permissions for Section
-    const fetchSectionsStatus = loginPermissions?.filter((item) => item.formId === formId.SECTION && item.isFormAccess === true)
+    const fetchSectionsStatus = loginPermissions?.filter((item:any) => item.formId === formId.SECTION && item.isFormAccess === true)
     setSectionsPermissions(fetchSectionsStatus)
     //Checking Permissions for TableDetails
-    const fetchTableDetailsStatus = loginPermissions?.filter((item) => item.formId === formId.TABLEDETAILS && item.isFormAccess === true)
+    const fetchTableDetailsStatus = loginPermissions?.filter((item:any) => item.formId === formId.TABLEDETAILS && item.isFormAccess === true)
     setTableDetailsPermissions(fetchTableDetailsStatus)
     //Checking Permissions for Tax
-    const fetchTaxStatus = loginPermissions?.filter((item) => item.formId === formId.TAX && item.isFormAccess === true)
+    const fetchTaxStatus = loginPermissions?.filter((item:any) => item.formId === formId.TAX && item.isFormAccess === true)
     setTaxPermissions(fetchTaxStatus)
     //Checking Permissions for PrintDesign
-    const fetchPrintDesignStatus = loginPermissions?.filter((item) => item.formId === formId.PRINTDESIGN && item.isFormAccess === true)
+    const fetchPrintDesignStatus = loginPermissions?.filter((item:any) => item.formId === formId.PRINTDESIGN && item.isFormAccess === true)
     setPrintDesignPermissions(fetchPrintDesignStatus)
     //Checking Permissions for Role
-    const fetchRoleStatus = loginPermissions?.filter((item) => item.formId === formId.ROLE && item.isFormAccess === true)
+    const fetchRoleStatus = loginPermissions?.filter((item:any) => item.formId === formId.ROLE && item.isFormAccess === true)
     setRolePermissions(fetchRoleStatus)
     //Checking Permissions for Users
-    const fetchUserStatus = loginPermissions?.filter((item) => item.formId === formId.USERREGISTRATION && item.isFormAccess === true)
+    const fetchUserStatus = loginPermissions?.filter((item:any) => item.formId === formId.USERREGISTRATION && item.isFormAccess === true)
     setUserPermissions(fetchUserStatus)
     //Checking Permissions for Reposrts
-    const fetchReportStatus = loginPermissions?.filter((item) => item.formId === formId.REPORTS && item.isFormAccess === true)
+    const fetchReportStatus = loginPermissions?.filter((item:any) => item.formId === formId.REPORTS && item.isFormAccess === true)
     setReportsPermissions(fetchReportStatus)
     AsyncStorage.setItem('RestaurantName', data?.userName)
 
@@ -507,7 +543,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
                             </Text>
                           </View>
                         </>
-                      )} onPress={() => navigation.navigate('Menu')} />
+                      )} onPress={() => navigation.navigate('MenuCategory')} />
                   </View> : null
                 }
               </View>
@@ -566,7 +602,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
                             </>
                           )}
                           labelStyle={styles.drawerLabelSty4}
-                          onPress={() => navigation.navigate('ProductStock')} />
+                          onPress={() => navigation.navigate('Productstock')} />
                       )
                     }
 
@@ -1081,7 +1117,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
         drawerItemStyle: { display: 'none' }
       }} />
 
-      <Drawer.Screen name="Menu" component={Menu} options={{
+      <Drawer.Screen name="MenuCategory" component={Menu} options={{
         headerShown: false,
         drawerLabel: "Menu",
         drawerLabelStyle: { ...styles.drawerLabelSty },
@@ -1145,11 +1181,11 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
         drawerLabelStyle: { ...styles.drawerLabelSty },
       }} />
 
-<Drawer.Screen name="SideMenuHeaderMaster" component={SideMenuHeaderMaster} options={{
+{/* <Drawer.Screen name="SideMenuHeaderMaster" component={SideMenuHeaderMaster} options={{
         headerShown: false,
         drawerLabel: "SideMenuHeaderMaster",
         drawerLabelStyle: { ...styles.drawerLabelSty },
-      }} />
+      }} /> */}
 
       <Drawer.Screen name="Bar" component={Bar} options={{
         headerShown: false,
@@ -1196,9 +1232,37 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
         drawerLabel: "AddModifier",
         drawerLabelStyle: { ...styles.drawerLabelSty },
       }} />
+      <Drawer.Screen name="Role" component={Role} options={{
+        headerShown: false,
+        drawerLabel: "Role",
+        drawerLabelStyle: { ...styles.drawerLabelSty },
+      }} />
+
+<Drawer.Screen name="LoginScreen" component={LoginScreen} options={{
+        headerShown: false,
+        drawerLabel: "",
+        drawerItemStyle: { display: 'none' }
+      }} />
+
+<Drawer.Screen name="UserRegistration" component={UserRegistration} options={{
+        headerShown: false,
+        drawerLabel: "",
+        drawerItemStyle: { display: 'none' }
+      }} />
+      <Drawer.Screen name="ForgotPassword" component={ForgotPassword} options={{
+        headerShown: false,
+        drawerLabel: "",
+        drawerItemStyle: { display: 'none' }
+      }} />
+
+<Drawer.Screen name="IntroScreen" component={IntroScreen} options={{
+        headerShown: false,
+        drawerLabel: "",
+        drawerItemStyle: { display: 'none' }
+      }} />
       {
         (inventorymenu == true || inventorymenu == false) && (
-          <Drawer.Screen name="ProductStock" component={Productstock} options={{
+          <Drawer.Screen name="Productstock" component={Productstock} options={{
             headerShown: false,
             drawerLabel: "- Product/Stock",
             drawerLabelStyle: { ...styles.drawerLabelSty1 },
@@ -1216,7 +1280,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
       }
       {
         (inventorymenu == true || inventorymenu == false) && (
-          <Drawer.Screen name="SupplierStock" component={Supplierstock} options={{
+          <Drawer.Screen name="Supplierstock" component={Supplierstock} options={{
             headerShown: false,
             drawerLabel: "- Supplier",
             drawerLabelStyle: { ...styles.drawerLabelSty1 },
@@ -1233,7 +1297,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
           }} />
         )
       }
-      {
+      {/* {
         (submenunvg == true) && (
           <Drawer.Screen name="Modifiers" component={Modifiers} options={{
             headerShown: false,
@@ -1241,7 +1305,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
             drawerLabelStyle: { ...styles.drawerLabelSty1 },
           }} />
         )
-      }
+      } */}
       {
         (submenunvg == true || submenunvg == false) && (
           <Drawer.Screen name="Discount" component={Discount} options={{
@@ -1287,7 +1351,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
           }} />
         )
       }
-      {/* {
+       {
         (submenunvg == true || submenunvg == false) && (
           <Drawer.Screen name="Modifiers" component={Modifiers} options={{
             headerShown: false,
@@ -1295,7 +1359,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
             drawerLabelStyle: { ...styles.drawerLabelSty1 },
           }} />
         )
-      } */}
+      } 
       {
         (submenunvg == true || submenunvg == false) && (
           <Drawer.Screen name="Tax" component={Tax} options={{
@@ -1314,7 +1378,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
           }} />
         )
       }
-      {/* {
+       {
         (submenunvg == true) && (
           <Drawer.Screen name="PrintDesign" component={PrintDesign} options={{
             headerShown: false,
@@ -1322,8 +1386,8 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
             drawerLabelStyle: { ...styles.drawerLabelSty1 },
           }} />
         )
-      } */}
-      {
+      } 
+      {/* {
         (usersettingmenu == true) && (
           <Drawer.Screen name="Role" component={Role} options={{
             headerShown: false,
@@ -1331,7 +1395,7 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
             drawerLabelStyle: { ...styles.drawerLabelSty1 },
           }} />
         )
-      }
+      } */}
       {
 
         (usersettingmenu == true) && (
@@ -1401,3 +1465,5 @@ export default function SideMenu({ navigation, route }: { navigation: any, route
   ) : null
 
 }
+
+

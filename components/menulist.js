@@ -2,12 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { DataTable } from 'react-native-paper';
 import Toast from 'react-native-root-toast';
 import styles from '../assets/css/style';
 import Colors from '../screens/constants/colors';
-import Modifiers from '../screens/masters/Modifiers';
 import { endPoint } from '../services/api/apiConstant.js';
 import api from '../services/api/callingApi';
 import EditIcon from '../assets/images/editIcon.js'
@@ -19,10 +18,9 @@ import Modal from "react-native-modal";
 import DeletePopupIcon from '../assets/images/trash.js'
 
 
-// import { ScrollView } from 'react-native-gesture-handler';
-
+// TableViewItems component
 export default function TableViewItems({ data, updateDelete, sendEditData, sendDiscountData, sendModifierData, ...props }) {
-
+console.log(data,"tableviewesdfxcgvbhjnkm")
     // const numberOfItemsPerPageList = [5, 10, 15];
     //Changes From Prajwala on 30-06-2023
     const [numberOfItemsPerPageList, setNumberOfItemsPerPageList] = useState([]);
@@ -321,12 +319,13 @@ export default function TableViewItems({ data, updateDelete, sendEditData, sendD
                         </DataTable.Title>
                     </DataTable.Header>
                     <ScrollView >
-                        {data
-                            .slice(
-                                page * numberOfItemsPerPage,
-                                page * numberOfItemsPerPage + numberOfItemsPerPage
-                            )
-                            .map((row) => tableRow(row))}
+                  
+                    {data && data.length > 0 ? (
+    data.slice(page * numberOfItemsPerPage, page * numberOfItemsPerPage + numberOfItemsPerPage)
+        .map((row, index) => tableRow(row, index))
+) : (
+null)}
+
 
                     </ScrollView>
 
@@ -353,5 +352,3 @@ export default function TableViewItems({ data, updateDelete, sendEditData, sendD
 
     );
 }
-
-

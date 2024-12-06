@@ -239,14 +239,19 @@ export default function SideMenuHeaderMaster({ heading }) {
         </View>
 
         {/* Menu icon to open the drawer */}
-        <View style={styles.headerFlexCenter}>
+        {/* <View style={styles.headerFlexCenter}>
           <Appbar.Action 
             style={{ alignSelf: 'flex-end' }} 
             icon="menu" 
             onPress={() => navigation.navigate('SideMenu')} // Open the drawer when menu icon is clicked
           />
-        </View>
-
+        </View> */}
+ <View>
+                        <Appbar.Action style={{ alignSelf: 'flex-end' }}
+                            icon='menu'
+                            onPress={() => navigation.openDrawer()}
+                        />
+                    </View>
       </View>
     </>
   );

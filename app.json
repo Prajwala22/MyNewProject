@@ -4,31 +4,32 @@
     "slug": "watermelonpos",
     "version": "1.0.0",
     "orientation": "landscape",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/splash2.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/images/splash1.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true
     },
+    "splash": {
+      "image": "./assets/images/splash2.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "borderRadius": 0
+    },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo.png",
+        "foregroundImage": "./assets/images/playstore.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.prajju2000.watermelonpos"
+      "package": "com.jeevansanju.watermelonpos"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "ac6d0dfa-1baf-47ed-8906-623ecb11513c"
+        "projectId": "0cac7b74-16f2-4a4e-a41b-afeabb0e5512"
       }
     },
-    "owner": "prajju2000"
+    "owner": "jeevansanju"
   }
 }

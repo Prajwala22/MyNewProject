@@ -266,8 +266,9 @@ export default function ItemsRecipe({ navigation, route }: { navigation: any, ro
                 outlets: outletChecked
 
             }
+            console.log(myJson,"item")
             const result = await api.CreateMasterData(endPoint.CREATE_ITEMS, token, myJson);
-
+console.log(result,"resultitem")
             if (itemDataLength >= 1) {
                 setopenSuccessMsg(true)
                 setCatKey(0);
@@ -309,7 +310,7 @@ export default function ItemsRecipe({ navigation, route }: { navigation: any, ro
                 <View style={[styles.flexColumn, styles.alignCenter, styles.justifyCenter, styles.SuccessPopup]}>
                     <Text style={[styles.font24, styles.textBlack, styles.fontBold, styles.marBtm8]}>Success!</Text>
                     <Text style={[styles.font16, styles.textBlack, styles.marBtm26]}>Item Created Successfully</Text>
-                    <TouchableOpacity style={styles.continueBtn} onPress={() => [successOpen(), navigation.navigate('Menu')]}>
+                    <TouchableOpacity style={styles.continueBtn} onPress={() => [successOpen(), navigation.navigate('MenuCategory')]}>
                         <Text style={[styles.textWhite, styles.font16]}>Continue</Text>
                     </TouchableOpacity>
                 </View>
@@ -358,12 +359,11 @@ export default function ItemsRecipe({ navigation, route }: { navigation: any, ro
               [{ text: 'OK', onPress: () => {} }]
             );
           } else {
-            alert("2")
             // Set the selected image URI
             setImage(result.uri);
     
             // Set the base64 string with the data URI format
-            setImageBase64('data:image/jpg;base64,' + result?.assets[0]?.base64);
+            setImagebase64('data:image/jpg;base64,' + result?.assets[0]?.base64);
     
             // Get the file extension from the URI (after the last dot)
             let fileExtension = result?.assets[0]?.uri.slice(result?.assets[0]?.uri.lastIndexOf('.') + 1);

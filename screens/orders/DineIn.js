@@ -3003,6 +3003,7 @@ export default function DineIn({ navigation, route }) {
                   <Searchbar
                     icon={() => <SearchIcon />}
                     inputStyle={styles.searchInput}
+                    containerStyle={styles.searchCon}
                     style={styles.searchContainer}
                     placeholderTextColor={'#484D54'}
                     placeholder="Search"

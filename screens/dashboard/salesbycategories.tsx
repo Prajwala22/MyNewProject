@@ -19,9 +19,10 @@ import SalesByCategoriesTableView from '../../components/categorySalesTableView'
 import Header from '../../components/sideMenuHeaderMaster';
 import { endPoint } from '../../services/api/apiConstant';
 import api from '../../services/api/callingApi';
+import { StyleSheet } from 'react-native';
 
 
-export default function salesbyCategories({ navigation, route }: { navigation: any, route: any }) {
+export default function salesbyCategories() {
   const [data, setData] = useState([])
   const [data1, setData1] = useState([])
   const isFocused = useIsFocused();
@@ -56,27 +57,24 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
     numberOfItemsPerPageList[0]
   );
   const from = page * numberOfItemsPerPage;
-  var count = from + 1;
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setTimeout(() => getRestaurant(), 1000);
-        const jsonValue = await AsyncStorage.getItem('userInfo');
-        const loginData = JSON.parse(jsonValue);
-        setdefauloutlet(loginData.outletId);
+        await getRestaurant();
+        const storedUserInfo = await AsyncStorage.getItem('userInfo');
+        const userInfo = JSON.parse(storedUserInfo);
+        setdefauloutlet(userInfo.outletId);
       } catch (error) {
-        // Handle any errors that might occur during the asynchronous operations
+        console.error("Failed to fetch data", error);
       }
     };
-    setSelectedEndDate(null);
-    setSelectedStartDate(null);
-    fetchData(); // Call the async function
-    
-    
+  
+    fetchData();
   }, [isFocused]);
+  
 
+  
   useEffect(() => {
     setTimeout(() => getRestaurant(), 1000);
   }, [isFocused]);
@@ -85,10 +83,8 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
     const userRoleId = await AsyncStorage.getItem('userRoleId')
     const restaurantName = await AsyncStorage.getItem('restaurantName')
     const outletName = await AsyncStorage.getItem('outletName')
-    const outletAddress = await AsyncStorage.getItem('outletAddress')
     const jsonValue: any = await AsyncStorage.getItem('userInfo')
     let loginData = JSON.parse(jsonValue);
-    let token = loginData.token;
     // const outletid = await AsyncStorage.getItem('checkoutletId')
     // setOutletField(outletid)
     setRestaurant(restaurantName)
@@ -96,12 +92,12 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
     setuserRoleId(userRoleId)
 
   }
-  //Get Outlet by Restaurant
-  useEffect(() => {
+
+   //Get Outlet by Restaurant
+   useEffect(() => {
 
     getOutletList();
-    return () => {
-      +
+    return () => { 
         setData([]);
     }
   }, [isFocused]);
@@ -117,16 +113,15 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
     else {
     }
   }
-
-  let outletDataArray = outletData.map((s, i) => {
-
+  let outletDataArray = (outletData && outletData.length > 0) ? outletData.map((s, i) => {
     let newData = {
       key: i + 1,
       label: s.outletName,
       value: s.outletId
-    }
+    };
     return newData;
-  })
+}) : [];  // If no data exists, return an empty array
+
 
 
   const showDateTimePicker = (type: any) => {
@@ -140,6 +135,7 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
     setIsStartDateTimePickerVisible(false);
     setIsEndDateTimePickerVisible(false);
   };
+
   const handleDatePicked = (date: any, type: any) => {
     const selDate = moment(date.dateString).format("YYYY-MM-DD");
     if (type === 'startDate') {
@@ -151,10 +147,9 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
     }
     setDateError(false);
   };
+  
 
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
+  
 
  
   //get sales by category list Api
@@ -164,12 +159,12 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
       setData([])
     }
   }, [isFocused]);
+
   const getSalesbyCategoryList = async () => {
     setIsrefreshingresult(true)
     const jsonValue: any = await AsyncStorage.getItem('userInfo')
     let loginData = JSON.parse(jsonValue);
     let token = loginData.token;
-    let outletId = loginData.outletId;
     const outletName = await AsyncStorage.getItem('outletName')
     SetOutlet(outletName)
     let myJson = {
@@ -195,7 +190,6 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
     const jsonValue: any = await AsyncStorage.getItem('userInfo')
     let loginData = JSON.parse(jsonValue);
     let token = loginData.token;
-    let outletId = loginData.outletId;
     const outletName = await AsyncStorage.getItem('outletName')
     SetOutlet(outletName)
     let myJson = {
@@ -216,20 +210,18 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
       setIsrefreshingresult(false)
     }
   }
-  //Category Sales Count
-  useEffect(() => {
 
-    categorySalesCountList();
 
-    return () => {
-    }
-  });
-  const categorySalesCountList = () => {
-    let dineinFilter = data.filter((item) => item.orderType === "Dine-in")
-    let takeAwayFilter = data.filter((item) => item.orderType === "Walk-in")
-    setDineinSalesCount(dineinFilter.length >= 0 ? dineinFilter.length : 0)
-    setTakeAwaySalesCount(takeAwayFilter.length >= 0 ? takeAwayFilter.length : 0)
-  }
+
+   const categorySalesCountList = () => {
+    let dineinFilter = Array.isArray(data) ? data.filter((item) => item && item.orderType === "Dine-in") : [];
+    let takeawayFilter = Array.isArray(data) ? data.filter((item) => item.orderType === "Walk-in") : [];
+    
+    setDineinSalesCount(dineinFilter.length); // Don't check for >= 0, the length is always >= 0
+    setTakeAwaySalesCount(takeawayFilter.length);
+  };
+
+
   const pieData = [
     {
       value: dineinSalesCount,
@@ -240,7 +232,37 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
     { value: takeawaySalesCount, color: '#E83B42', gradientCenterColor: '#E83B42' },
     { value: 0, color: '#CCCCCC', gradientCenterColor: '#CCCCCC' },
   ];
-  const sendDataToParent = (data) => { // the callback. Use a better name
+  
+  // Ensure the sum of all values is not zero (or replace with a valid fallback)
+   // Filter out slices with zero value
+   const filteredPieData = pieData.filter(slice => slice.value > 0);
+
+   // Fallback to a default slice if filteredPieData is empty
+   const finalPieData = filteredPieData.length > 0 ? filteredPieData : [
+     { value: 1, color: '#CCCCCC', gradientCenterColor: '#CCCCCC' }
+   ];
+ 
+  // If both sales are zero, ensure there is at least some data to render
+  
+ 
+
+
+  
+  useEffect(() => {
+    categorySalesCountList();
+
+  }, [data]);
+  // const pieData = [
+  //   {
+  //     value: dineinSalesCount,
+  //     color: '#008960',
+  //     gradientCenterColor: '#008960',
+  //   },
+  //   { value: 0, color: '#959FAD', gradientCenterColor: '#959FAD' },
+  //   { value: takeawaySalesCount, color: '#E83B42', gradientCenterColor: '#E83B42' },
+  //   { value: 0, color: '#CCCCCC', gradientCenterColor: '#CCCCCC' },
+  // ];
+  const sendDataToParent = () => { // the callback. Use a better name
   };
   //  Internet down msg 
   const successInternetdownOpen = () => {
@@ -264,7 +286,6 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
 
 
   //--------------------------- Export Category Sales  ----------------------------------
-
   const exportXlsx = async () => {
     var ws = XLSX.utils.json_to_sheet(data);
     var wb = XLSX.utils.book_new();
@@ -283,9 +304,9 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
       'http://techslides.com/demos/sample-videos/small.mp4',
       FileSystem.documentDirectory + 'small.mp4'
     )
-      .then(({ uri }) => {
+      .then(() => {
       })
-      .catch(error => {
+      .catch(() => {
       });
     await Sharing.shareAsync(uri, {
       mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -300,196 +321,190 @@ export default function salesbyCategories({ navigation, route }: { navigation: a
     backgroundColor: '#fff',
     weekDaysColor: '#EC187B',
     selectedDateBackgroundColor: '#EC187B',
-    confirmButtonColor
+    confirmButtonColor: '#EC187B',
+  };
 
-      : '#EC187B',
-  }
 
   // ---------------------------------------- User Interface -----------------------------------------------------------
+
   return (
     <>
-      <Header heading={"Sales By Categories"} />
+<Header heading={"Sales By Categories"} />
+{/* Select Start Date */}
+<DatePicker
+  mode={'single'}
+  colorOptions={colorOptions}
+  modalStyles={{ backgroundColor: '#484D546E' }}
+  isVisible={isStartDateTimePickerVisible}
+  onConfirm={date => handleDatePicked(date, 'startDate')}
+  onCancel={() => hideDateTimePicker('startDate')}
+/>
+{/*Select End Date */}
+<DatePicker
+  mode={'single'}
+  colorOptions={colorOptions}
+  modalStyles={{ backgroundColor: '#484D546E' }}
+  isVisible={isEndDateTimePickerVisible}
+  onConfirm={date => handleDatePicked(date, 'endDate')}
+  onCancel={() => hideDateTimePicker('endDate')}
+/>
+<ScrollView style={styles.dashScrollView}>
+<View style={styles.categoryBlkCon}>
+<View style={[styles.flexrow, styles.justifyCenter]}>
+<View style={[styles.dashColTop, styles.width50]}>
+<View style={styles.dashTopCon}>
+<View style={styles.leftCon}>
+<Text style={styles.dineInText}>Total Category Sales</Text>
 
-      <DatePicker
-        mode={'single'}
-        colorOptions={colorOptions}
-        modalStyles={{ backgroundColor: '#484D546E' }}
-        isVisible={isStartDateTimePickerVisible}
-        onConfirm={date => handleDatePicked(date, 'startDate')}
-        onCancel={() => hideDateTimePicker('startDate')}
-      />
-      <DatePicker
-        mode={'single'}
-        colorOptions={colorOptions}
-        modalStyles={{ backgroundColor: '#484D546E' }}
-        isVisible={isEndDateTimePickerVisible}
-        onConfirm={date => handleDatePicked(date, 'endDate')}
-        onCancel={() => hideDateTimePicker('endDate')}
-      />
-      <ScrollView style={styles.dashScrollView}>
-        <View style={styles.categoryBlkCon}>
-          <View style={[styles.flexrow, styles.justifyCenter]}>
-           
-              <View style={[styles.dashColTop, styles.width50]}>
-                <View style={styles.dashTopCon}>
-                  <View style={styles.leftCon}>
-                    <Text style={styles.dineInText}>Total Category Sales</Text>
-                    <View style={styles.totComView}>
-                      <View style={styles.comCircle}></View>
-                      <Text style={[styles.completedText, styles.textDefault]}>{dineinSalesCount} Dine In Category Sales</Text>
-                    </View>
-                    <View style={styles.totComView}>
-                      <View style={styles.penCircle}></View>
-                      <Text style={[styles.completedText, styles.textDefault]}>{takeawaySalesCount} Take Away Category Sales</Text>
-                    </View>
-                  </View>
-                  <View style={[styles.dashrgtCon, styles.flexrow, styles.justifyEnd, styles.padL10]}>
-                    <PieChart
-                      data={pieData}
-                      radius={90}
-                    />
-
-                  </View>
-                </View>
-              </View>
-            
-          </View>
-
-          <View style={[styles.textcontainer1, styles.catSubBlk]}>
-            <Text style={styles.textStyle1}>
-              Sales By Categories - {selectedOutletName ? selectedOutletName : outlet }
-            </Text>
-          </View>
-          <View style={[styles.flexrow, styles.marBtm30, styles.alignCenter, styles.justifyBetween]}>
-            <View style={[styles.flexrow]}>
-              <View style={[styles.width170px]}>
-               
-                <View style={styles.pickerView}>
-  <ModalDropDown style={styles.outletImg} />
-  <ModalSelector
-    data={outletDataArray.sort(function (a, b) {
-      return a.label.localeCompare(b.label);
-    })}
-    childrenContainerStyle={[styles.stateDateCon]}
-    selectStyle={styles.selectText}
-    selectTextStyle={[styles.font10, styles.textBlack]}
-    optionContainerStyle={styles.selectCont}
-    optionTextStyle={[styles.textStyle]}
-    initValueTextStyle={[styles.font10, styles.textDate]}
-    overlayStyle={styles.overlayText}
-    cancelStyle={styles.selectCont}
-    cancelContainerStyle={styles.cancelCont}
-    cancelText={"Cancel"}
-    initValue={outletDataArray.find(item => item.value === defauloutlet)?.label || ''}  
-      selectedKey={outletKey}
-    onChange={(option) => {
-      if (option.key) {
-        setOutletKey(option.key);
-        setOutletField(option.value);
-        setSelectedOutletName(option.label);
-
-      }
-    }}
-  />
+<View style={styles.totComView}>
+<View style={styles.comCircle}></View>
+<Text style={styles.completedText}>
+{dineinSalesCount ? dineinSalesCount : 0} Dine In Category Sales
+</Text>
 </View>
 
-              </View>
-             
-   <View style={[styles.width170px, styles.padL10]}>
-  <TouchableOpacity style={[styles.stateDateCon, styles.flexrow, styles.alignCenter]}
-    onPress={() => showDateTimePicker('startDate')}>
-    <CalenderIcon />
-    {selectedStartDate ?
-      <View style={[styles.paddL5]}>
-        <Text style={[styles.font9, styles.textDate]}>Start Date</Text>
-        <Text style={[styles.font10, styles.textBlack]}>{selectedStartDate ?? null}</Text>
-      </View> : <View style={[styles.paddL5]}>
-        <Text style={[styles.font10, styles.textDate]}>Start Date</Text>
+<View style={styles.totComView}>
+
+<View style={styles.penCircle}></View>
+<Text style={[styles.completedText, styles.textDefault]}>
+{takeawaySalesCount} Take Away Category Sales
+</Text>
+</View>
+  </View>
+
+  <View style={[styles.dashrgtCon, styles.flexrow, styles.justifyEnd, styles.padL10]}>
+  {(dineinSalesCount > 0 || takeawaySalesCount > 0) && (
+  <PieChart data={pieData} radius={90} />
+)}
+
+</View>
+
+  </View>
+  </View>
+  </View>
+
+  <View style={[styles.textcontainer1, styles.catSubBlk]}>
+<Text style={styles.textStyle1}>
+Sales By Categories - {selectedOutletName ? selectedOutletName : outlet}
+</Text>
+
+
+</View>
+<View style={[styles.flexrow, styles.marBtm30, styles.alignCenter, styles.justifyBetween]}>
+<View style={[styles.flexrow]}>
+  <View style={[styles.width170px]}>
+    <View style={styles.pickerView}>
+    <ModalDropDown style={styles.outletImg} />
+    <ModalSelector
+data={outletDataArray.sort((a, b) => a.label.localeCompare(b.label))}
+childrenContainerStyle={StyleSheet.flatten([styles.stateDateCon])}  // Use flatten here
+selectStyle={styles.selectText}
+selectTextStyle={StyleSheet.flatten([styles.font10, styles.textBlack])}  // Flatten the array of styles
+optionContainerStyle={styles.selectCont}
+optionTextStyle={styles.textStyle}
+initValueTextStyle={StyleSheet.flatten([styles.font10, styles.textDate])}  // Flatten here as well
+overlayStyle={styles.overlayText}
+cancelStyle={styles.selectCont}
+cancelContainerStyle={styles.cancelCont}
+cancelText={"Cancel"}
+initValue={outletDataArray.find(item => item.value === defauloutlet)?.label || ''}
+selectedKey={outletKey}
+onChange={(option) => {
+if (option.key) {
+setOutletKey(option.key);
+setOutletField(option.value);
+setSelectedOutletName(option.label);
+}
+}}
+/>
+    </View>
+    </View>
+    <View style={[styles.width170px, styles.padL10]}>
+    <TouchableOpacity
+      style={[styles.stateDateCon, styles.flexrow, styles.alignCenter]}
+      onPress={() => showDateTimePicker('startDate')}
+    >
+      <CalenderIcon />
+      {selectedStartDate ? (
+        <View style={[styles.paddL5]}>
+          <Text style={[styles.font9, styles.textDate]}>Start Date</Text>
+          <Text style={[styles.font10, styles.textBlack]}>
+            {selectedStartDate ?? null}
+          </Text>
+        </View>
+      ) : (
+        <View style={[styles.paddL5]}>
+          <Text style={[styles.font10, styles.textDate]}>Start Date</Text>
+        </View>
+      )}
+    </TouchableOpacity>
+    {selectedEndDate < selectedStartDate && (
+<Text style={styles.errorText}>Start date cannot be greater than end date</Text>
+)}
+
+  </View>
+  <View style={[styles.width170px, styles.paddL10]}>
+    <TouchableOpacity
+      style={[styles.stateDateCon, styles.flexrow, styles.alignCenter]}
+      onPress={() => showDateTimePicker('endDate')}
+    >
+      <CalenderIcon />
+      {selectedEndDate ? (
+        <View style={[styles.paddL5]}>
+          <Text style={[styles.font9, styles.textDate]}>End Date</Text>
+          <Text style={[styles.font10, styles.textBlack]}>
+            {selectedEndDate ?? null}
+          </Text>
+        </View>
+      ) : (
+        <View style={[styles.paddL5]}>
+          <Text style={[styles.font10, styles.textDate]}>End Date</Text>
+        </View>
+      )}
+    </TouchableOpacity>
+  </View>
+  <View style={[styles.paddL10]}>
+    <TouchableOpacity
+      style={[styles.SearchBtn, selectedEndDate < selectedStartDate && styles.disabledBtn]}
+      disabled={selectedEndDate < selectedStartDate}
+      onPress={() => {
+        // Perform the search
+        getSalesbyCategoryListOutlet();
+      }}
+    >
+      <Text style={[styles.textWhite, styles.font11]}>Filter</Text>
+    </TouchableOpacity>
+  </View>
+  </View>
+  <TouchableOpacity onPress={() => exportXlsx()} style={[styles.flexrow, styles.alignCenter, styles.height35]}>
+  <ExcelIcon />
+  <Text style={[styles.font9, styles.padL5, styles.textBlack]}>Export</Text>
+</TouchableOpacity>
+ </View>
+ <ScrollView>
+<View style={styles.table}>
+  { !isDataPresent ?(
+    <View style={styles.noRecordFoundView}>
+      <Image style={styles.noRecordImage} source={require('../../assets/images/clipboard.png')} />
+      <View>
+        <Text style={styles.recordDisplay}>There are no Category Sales to display.</Text>
       </View>
-    }
-  </TouchableOpacity>
-  {selectedEndDate < selectedStartDate && (
-    <Text style={styles.errorText}>Start date cannot be greater than end date</Text>
+    </View>
+  ) : (
+    <SalesByCategoriesTableView data={data} sendEditData={sendDataToParent} updateDelete={() => getSalesbyCategoryList()} />
   )}
 </View>
-<View style={[styles.width170px, styles.paddL10]}>
-  <TouchableOpacity style={[styles.stateDateCon, styles.flexrow, styles.alignCenter]}
-    onPress={() => showDateTimePicker('endDate')}>
-    <CalenderIcon />
-    {selectedEndDate ?
-      <View style={[styles.paddL5]}>
-        <Text style={[styles.font9, styles.textDate]}>End Date</Text>
-        <Text style={[styles.font10, styles.textBlack]}>{selectedEndDate ?? null}</Text>
-      </View> : <View style={[styles.paddL5]}>
-        <Text style={[styles.font10, styles.textDate]}>End Date</Text>
-      </View>
-    }
-  </TouchableOpacity>
-</View>
 
-<View style={[styles.paddL10]}>
-  <TouchableOpacity
-    style={[styles.SearchBtn, selectedEndDate < selectedStartDate && styles.disabledBtn]}
-    disabled={selectedEndDate < selectedStartDate}
-    onPress={() => {
-      // Perform the search
-      getSalesbyCategoryListOutlet();
-    }}
-  >
-    <Text style={[styles.textWhite, styles.font11]}>Filter</Text>
-  </TouchableOpacity>
-</View>
-
-            </View>
-            <TouchableOpacity onPress={() => exportXlsx()} style={[styles.flexrow, styles.alignCenter, styles.height35]}>
-              <ExcelIcon />
-              <Text style={[styles.font9, styles.padL5, styles.textBlack]}>Export</Text>
-            </TouchableOpacity>
-          </View>
-
-
-          <ScrollView>
-            <View style={styles.table}>
-              {!isDataPresent
-                ?
-                <View style={styles.noRecordFoundView}>
-                  <Image
-                    style={styles.noRecordImage}
-                    source={(require('../../assets/images/clipboard.png'))}
-                  />
-                  <View>
-                    <Text style={styles.recordDisplay}>There are no Category Sales to display.</Text>
-                  </View>
-
-                  {/* <View style={styles.noRecordItem}>
-                  <Text style={styles.addText} onPress={() => openAddTableType()}>
-                    Add Section
-                  </Text>
-                  <Text style={styles.recordDisplay}>
-                    to continue.
-                  </Text>
-                </View> */}
-                </View>
-                :
-                <SalesByCategoriesTableView data={data} sendEditData={sendDataToParent} updateDelete={() => getSalesbyCategoryList()} />
-              }
-            </View>
-            {openInternetdownMsg &&
-              <Modal isVisible={openInternetdownMsg}>
-                {internetDownPop()}
-              </Modal>
-            }
-
-          </ScrollView>
-
-        </View>
-      </ScrollView>
-
-
-    </>
+{openInternetdownMsg && (
+  <Modal isVisible={openInternetdownMsg}>
+    {internetDownPop()}
+  </Modal>
+)}
+</ScrollView>
+  </View>
+</ScrollView>
+</>
   );
-
 }			
 						
-								
 								

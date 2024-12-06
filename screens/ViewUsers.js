@@ -249,13 +249,20 @@ useEffect(() => {
 
           </DataTable.Header>
           <ScrollView >
+          {data
+  .slice(page * numberOfItemsPerPage, page * numberOfItemsPerPage + numberOfItemsPerPage)
+  .map((row) => (
+    <View key={row.userId} style={[styles.tableRow, { borderColor: showView && showViewId == row.userId ? '#407C6A' : '#F5F3F6' }]}>
+      {tableRow(row)}
+    </View>
+  ))}
 
-            {data
+            {/* {data
               .slice(
                 page * numberOfItemsPerPage,
                 page * numberOfItemsPerPage + numberOfItemsPerPage
               )
-              .map((row) => tableRow(row))}
+              .map((row) => tableRow(row))} */}
           </ScrollView>
 
           <DataTable.Pagination

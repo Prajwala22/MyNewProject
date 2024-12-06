@@ -178,7 +178,6 @@ export default function Discount({ navigation, route }) {
     let outletId = loginData.outletId;
 
     const result = await api.getAllMasterData(token, endPoint.GET_DISCOUNT + outletId);
-    console.log(result,"discountData")
     setDiscountLength(result.data.length)
 
     if (result.data === null) {
@@ -475,7 +474,7 @@ export default function Discount({ navigation, route }) {
     return (
       <KeyboardAwareScrollView enableOnAndroid={true}
         enableAutomaticScroll={(Platform.OS === 'ios')}>
-        <View style={styles.popupContainer}>
+        <View style={[styles.popupContainer, styles.popupheight]}>
 
           <View>
 

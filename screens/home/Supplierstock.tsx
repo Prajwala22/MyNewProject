@@ -21,6 +21,7 @@ import { Platform } from 'react-native';
 
 export default function Supplierstock({ navigation, route }: { navigation: any, route: any }) {
     const [data, setData] = useState([]);
+    const[dataLength,setDataLength]= useState('');
     const [supplierData, setSupplierData] = useState([])
     const [productlistdata, setProductListData] = useState([])
 
@@ -33,7 +34,7 @@ export default function Supplierstock({ navigation, route }: { navigation: any, 
     const [page, setPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
     const [isDataPresent, setDataPreset] = useState(false);
-    const [searchQuery, setSearchQuery] = React.useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedValue2, setSelectedValue2] = useState("All Orders");
     const [activeTab, setActiveTab] = useState("Product/Stock");
     const isFocused = useIsFocused();
@@ -47,56 +48,20 @@ export default function Supplierstock({ navigation, route }: { navigation: any, 
     const [openInternetdownMsg, setopenInternetdownMsg] = useState(false);
     const [userRoleId, setuserRoleId] = useState('')
     const [supplierDataLength, setSupplierDataLength] = useState('0')
+    const [filteredProductData, setFilteredProductData] = useState(productdata);
 
-    const onChangeSearch = (text: any) => {
-        setSearchQuery(text)
-        if (text.length > 0) {
-            // getProductRequest();
-            // setDataPreset(true)
-            const requestData = {
-                page: "1",
-                keyword: text
-            }
-            const getProductUrl = `${watermelon_base_url}/all-suppliers?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5Y21GbmFHRjJZWEo1WVRFMlFHZHRZV2xzTG1OdmJRPT0=`;//Production
-            // const getProductUrl = `${watermelon_base_url}/all-suppliers?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5TVY4eFgzUmxjM1IxYzJWeVFHZHRZV2xzTG1OdmJRPT0=`;//Staging
-            try {
-                fetch(getProductUrl, {
-                    method: "POST",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                        "cache-control": "no-cache",
-                    },
-                    body: JSON.stringify(requestData),
-                }).then(res => res.json()).then(function (response) {
-                    console.log(response.data,"dwerefgfrew")
-                    if (response?.success === '1') {
-                        setProductData(response.data)
-                        setDataPreset(true)
-                    }
-                    else {
-                        setProductData([]);
-                        setDataPreset(false)
-                    }
-                });
-            } catch (error) {
-                Alert.alert(
-                    "Error",
-                    "Unable to delete task at this time. Please try again.",
-                    [
-                        {
-                            text: "OK", style: "cancel", onPress: () => {
-                            }
-                        }
-                    ]
-                );
-            }
-
-        }
-        else {
-            getProductRequest();
-        }
-    }
+    const onChangeSearch = (query) => {
+        setSearchQuery(query);
+    
+        // Filter productdata based on search query (assuming you search by company name)
+        const filteredData = productdata.filter(item =>
+            item.company_name.toLowerCase().includes(query.toLowerCase()) ||
+            item.address.toLowerCase().includes(query.toLowerCase()) ||
+            item.mobile_no.includes(query)
+        );
+    
+        setFilteredProductData(filteredData);
+    };
 
 
     const layout = useWindowDimensions();
@@ -150,7 +115,6 @@ export default function Supplierstock({ navigation, route }: { navigation: any, 
         let outletId = loginData.outletId;
         setOutletId(outletId)
         const result = await api.GetAllSupplier(token, outletId);
-        console.log(result,"getproductsupplier")
         setSupplierDataLength(result.data.length)
         if (JSON.stringify(result.data) === null || JSON.stringify(result.data) === "null" || result.data === "") {
             // Toast.show("Some Error occured. Please try again.");
@@ -158,6 +122,7 @@ export default function Supplierstock({ navigation, route }: { navigation: any, 
             setDataPreset(false);
         } else {
             setData(result.data);
+            setDataLength(result.data.length)
             setDataPreset(false);
             setProductData([])
         }
@@ -169,8 +134,10 @@ export default function Supplierstock({ navigation, route }: { navigation: any, 
             page: "1",
             keyword: ""
         }
-        const getProductUrl = `${watermelon_base_url}/all-suppliers?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5Y21GbmFHRjJZWEo1WVRFMlFHZHRZV2xzTG1OdmJRPT0=`;//Production
+//const getProductUrl = `${watermelon_base_url}/all-suppliers?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5Y21GbmFHRjJZWEo1WVRFMlFHZHRZV2xzTG1OdmJRPT0=`;//Production
         // const getProductUrl = `${watermelon_base_url}/all-suppliers?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5TVY4eFgzUmxjM1IxYzJWeVFHZHRZV2xzTG1OdmJRPT0=`;//Staging
+                    const getProductUrl = `${watermelon_base_url}/all-suppliers?Authorization=VjJGMFpYSnRaV3h2YmxCUFUwOXlaR1Z5YzNWd1pYSmhaRzFwYmtCd2IzTXVZMjl0`;
+
         try {
             fetch(getProductUrl, {
                 method: "POST",
@@ -248,8 +215,7 @@ export default function Supplierstock({ navigation, route }: { navigation: any, 
         }
 
         const result = await api.CreateInventorySupplier(token, myjson);
-        console.log("resultresultresultresultresult:::::",result)
-        if (result >= '1') {
+        if (dataLength >= '1') {
             setOpenSuppliert(false)
             setSearchQuery('')
             successOpen()
@@ -291,7 +257,7 @@ export default function Supplierstock({ navigation, route }: { navigation: any, 
 
     })
     //Manula Supplier Add Api 
-    const manualSupplierAdd = async (data) => {
+    const manualSupplierAdd = async (data:any) => {
         const jsonValue: any = await AsyncStorage.getItem('userInfo')
         let loginData = JSON.parse(jsonValue);
         let token = loginData.token;
@@ -306,7 +272,7 @@ export default function Supplierstock({ navigation, route }: { navigation: any, 
             OutletId: outletId
         }
         const result = await api.CreateInventorySupplier(token, myJson)
-        if (result >= '1') {
+        if (dataLength >= '1') {
             getProductSupplierMasterList();
             setOpenSuppliert(false)
             setSearchQuery('')
@@ -450,73 +416,66 @@ export default function Supplierstock({ navigation, route }: { navigation: any, 
                             </Pressable>
                         </View>
                         <View style={[styles.wdth100, styles.paddRL15]}>
-                            <View style={[styles.flexrow, styles.justifyBetween, styles.marBtm20, styles.wdth100, styles.flexWrap]}>
-                                {/* Search HTML */}
-                                <View style={[styles.wdth50, styles.marBtm10]}>
-                                    <Searchbar
-                                        placeholder="Search"
-                                        onChangeText={onChangeSearch}
-                                        value={searchQuery}
-                                        icon={() => <SearchIcon />}
-                                        inputStyle={styles.searchInput}
-                                        style={styles.searchContainer}
-                                        onSubmitEditing={() => generalsearchkeypad('Search softkey pressed!')}
-                                    />
-                                </View>
+    <View style={[styles.flexrow, styles.justifyBetween, styles.marBtm20, styles.wdth100, styles.flexWrap]}>
+        {/* Search HTML */}
+        <View style={[styles.wdth50, styles.marBtm10]}>
+            <Searchbar
+                placeholder="Search"
+                onChangeText={onChangeSearch}
+                value={searchQuery}
+                icon={() => <SearchIcon />}
+                inputStyle={styles.searchInput}
+                style={styles.searchContainer}
+                onSubmitEditing={() => generalsearchkeypad('Search softkey pressed!')}
+            />
+        </View>
 
-                                <DataTable>
-                                    {
-                                        isDataPresent && productdata.length !== 0 && (
-                                            <View style={[styles.producHeader]}>
-                                                <DataTable.Header style={styles.headerStyle}>
-                                                    <DataTable.Title style={styles.siNo}><Text style={styles.tableHeader}>Sl .No</Text></DataTable.Title>
-                                                    <DataTable.Title style={styles.FlexproducName}><Text style={styles.tableHeader}>Supplier Namer</Text></DataTable.Title>
-                                                    <DataTable.Title style={styles.producName}><Text style={styles.tableHeader}>Address</Text></DataTable.Title>
-                                                    <DataTable.Title style={styles.producName}><Text style={styles.tableHeader}>Contact Number</Text></DataTable.Title>
-                                                    <DataTable.Title style={styles.producName}><Text style={styles.tableHeader}>Action </Text></DataTable.Title>
-                                                </DataTable.Header>
-                                            </View>
-                                        )
-                                    }
+        <DataTable>
+            {
+                // Check if there's data present and if filteredProductData has items
+                filteredProductData.length !== 0 ? (
+                    <View style={[styles.producHeader]}>
+                        <DataTable.Header style={styles.headerStyle}>
+                            <DataTable.Title style={styles.siNo}><Text style={styles.tableHeader}>Sl .No</Text></DataTable.Title>
+                            <DataTable.Title style={styles.FlexproducName}><Text style={styles.tableHeader}>Supplier Name</Text></DataTable.Title>
+                            <DataTable.Title style={styles.producName}><Text style={styles.tableHeader}>Address</Text></DataTable.Title>
+                            <DataTable.Title style={styles.producName}><Text style={styles.tableHeader}>Contact Number</Text></DataTable.Title>
+                            <DataTable.Title style={styles.producName}><Text style={styles.tableHeader}>Action</Text></DataTable.Title>
+                        </DataTable.Header>
 
-                                    {!isDataPresent && productdata.length === 0 && (
-                                        <View style={[styles.tableRow, { borderColor: '#F5F3F6', paddingTop: 20, paddingBottom: 20 }]} >
-                                            <View style={styles.noRecordFoundView}>
-                                                <Image
-                                                    style={styles.noRecordImage}
-                                                    source={(require('../../assets/images/clipboard.png'))}
-                                                />
-                                                <View>
-                                                    <Text style={styles.recordDisplay}>There is no Supplier to display.</Text>
-                                                </View>
+                        {filteredProductData.map((item, index) => (
+                            <View style={styles.ProductRow} key={item._id}>
+                                <DataTable.Row style={styles.datatableextraline}>
+                                    <DataTable.Cell style={styles.flexSl}><Text style={styles.tableCell}>{index + 1}</Text></DataTable.Cell>
+                                    <DataTable.Cell style={styles.FlexproducName}><Text style={styles.tableCell}>{item.company_name}</Text></DataTable.Cell>
+                                    <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}>{item.address}</Text></DataTable.Cell>
+                                    <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}>{item.mobile_no}</Text></DataTable.Cell>
+                                    <DataTable.Cell style={styles.producName}>
+                                        <TouchableOpacity onPress={() => submiteproductdata(item)}>
+                                            <View style={styles.textcontainer2}>
+                                                <Text style={styles.textStyle2}>Add</Text>
                                             </View>
-                                        </View>
-                                    )}
-                                    {
-                                        isDataPresent && productdata.length !== 0 &&
-                                        productdata.map((item, index) => (
-                                            <View style={styles.ProductRow}>
-                                                <DataTable.Row style={styles.datatableextraline} key={item._id}>
-                                                    <DataTable.Cell style={styles.flexSl}><Text style={styles.tableCell}>{index + 1}</Text></DataTable.Cell>
-                                                    <DataTable.Cell style={styles.FlexproducName}><Text style={styles.tableCell}> {item.company_name}</Text></DataTable.Cell>
-                                                    <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}>{item.address}</Text></DataTable.Cell>
-                                                    <DataTable.Cell style={styles.producName}><Text style={styles.tableCell}>{item.mobile_no}</Text></DataTable.Cell>
-                                                    <DataTable.Cell style={styles.producName}>
-                                                        <TouchableOpacity onPress={() => submiteproductdata(item)}>
-                                                            <View style={styles.textcontainer2}>
-                                                                <Text style={styles.textStyle2} onPress={() => submiteproductdata(item)}>
-                                                                    Add
-                                                                </Text>
-                                                            </View>
-                                                        </TouchableOpacity>
-                                                    </DataTable.Cell>
-                                                </DataTable.Row>
-                                            </View>
-                                        ))
-                                    }
-                                </DataTable>
+                                        </TouchableOpacity>
+                                    </DataTable.Cell>
+                                </DataTable.Row>
+                            </View>
+                        ))}
+                    </View>
+                ) : (
+                    <View style={[styles.tableRow, { borderColor: '#F5F3F6', paddingTop: 20, paddingBottom: 20 }]}>
+                        <View style={styles.noRecordFoundView}>
+                            <Image style={styles.noRecordImage} source={require('../../assets/images/clipboard.png')} />
+                            <View>
+                                <Text style={styles.recordDisplay}>There is no Supplier to display.</Text>
                             </View>
                         </View>
+                    </View>
+                )
+            }
+        </DataTable>
+    </View>
+</View>
+
                         <Formik
                             validationSchema={suppliervalidationschema}
                             initialValues={{

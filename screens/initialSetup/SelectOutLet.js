@@ -132,7 +132,6 @@ const SelectOutlet = () => {
             // saving error
         }
         const discountResult = await api.getAllMasterData(token, endPoint.GET_DISCOUNT + pos.outletId);
-        console.log(discountResult,"discountResult")
         if (discountResult?.data?.length > 0) {
             navigation.navigate('Dashboard')
         } else {
