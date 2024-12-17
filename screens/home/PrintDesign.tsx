@@ -196,6 +196,8 @@ export default function PrintDesign({ navigation, route }: { navigation: any, ro
     // }
 
     const injectCKEditor = (headerval) => {
+
+        
         return `
           <html>
             <head>
